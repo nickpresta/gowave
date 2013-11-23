@@ -37,13 +37,13 @@ type Client struct {
 type ErrorResponse struct {
 	Response *http.Response
 	Err      struct {
-		Message string `json:message`
-	} `json:error`
+		Message string `json:"message"`
+	} `json:"error"`
 }
 
 func (resp *ErrorResponse) Error() string {
 	return fmt.Sprintf("%v %v: %d %+v",
-		resp.Response.Request.Method, resp.Response.Request.URL, resp.Response.StatusCode, resp.Err)
+		resp.Response.Request.Method, resp.Response.Request.URL, resp.Response.StatusCode, resp.Err.Message)
 }
 
 func (t *Timestamp) UnmarshalJSON(b []byte) error {
@@ -65,7 +65,7 @@ func (t Timestamp) MarshalJSON() ([]byte, error) {
 
 func NewClient(client *http.Client) *Client {
 	if client == nil {
-		panic("Missing http.Client when calling NewClient")
+		client = http.DefaultClient
 	}
 
 	baseURL, _ := url.Parse(defaultBaseURL)

@@ -10,31 +10,10 @@ type BusinessesService struct {
 }
 
 type Business struct {
-	Id                  string `json:"id"`
-	URL                 string `json:"url"`
-	CompanyName         string `json:"company_name"`
-	PrimaryCurrencyCode string `json:"primary_currency_code"`
-	BusinessTypeInfo    struct {
-		BusinessType       *string `json:"business_type"`
-		BusinessSubtype    *string `json:"business_subtype"`
-		OrganizationalType *string `json:"organizational_type"`
-	} `json:"business_type_info"`
-	AddressInfo struct {
-		Address1 *string `json:"address1"`
-		Address2 *string `json:"address2"`
-		City     *string `json:"city"`
-		Province struct {
-			Name *string `json:"name"`
-			Slug *string `json:"slug"`
-		} `json:"province"`
-		Country struct {
-			Name         *string `json:"name"`
-			CountryCode  *string `json:"country_code"`
-			CurrencyCode *string `json:"currency_code"`
-			URL          string  `json:"url"`
-		} `json:"country"`
-		PostalCode *string `json:"postal_code"`
-	} `json:"address_info"`
+	Id                  string    `json:"id"`
+	URL                 string    `json:"url"`
+	CompanyName         string    `json:"company_name"`
+	PrimaryCurrencyCode string    `json:"primary_currency_code"`
 	PhoneNumber         *string   `json:"phone_number"`
 	MobilePhoneNumber   *string   `json:"mobile_phone_number"`
 	TollFreePhoneNumber *string   `json:"toll_free_phone_number"`
@@ -45,6 +24,27 @@ type Business struct {
 	dateCreated         string    `json:"date_created"`
 	DateModified        Timestamp `json:"date_modified"`
 	dateModified        string    `json:"date_modified"`
+	BusinessTypeInfo    struct {
+		BusinessType       *string `json:"business_type"`
+		BusinessSubtype    *string `json:"business_subtype"`
+		OrganizationalType *string `json:"organizational_type"`
+	} `json:"business_type_info"`
+	AddressInfo struct {
+		Address1   *string `json:"address1"`
+		Address2   *string `json:"address2"`
+		City       *string `json:"city"`
+		PostalCode *string `json:"postal_code"`
+		Province   struct {
+			Name *string `json:"name"`
+			Slug *string `json:"slug"`
+		} `json:"province"`
+		Country struct {
+			Name         *string `json:"name"`
+			CountryCode  *string `json:"country_code"`
+			CurrencyCode *string `json:"currency_code"`
+			URL          string  `json:"url"`
+		} `json:"country"`
+	} `json:"address_info"`
 }
 
 func (service *BusinessesService) List() ([]Business, *http.Response, error) {
