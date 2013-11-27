@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -34,6 +35,11 @@ type Client struct {
 	Businesses *BusinessesService
 	Currencies *CurrenciesService
 	Countries  *CountriesService
+}
+
+type Response struct {
+	*http.Response
+	RawBody io.ReadCloser
 }
 
 type ErrorResponse struct {
@@ -100,7 +106,7 @@ func (c *Client) NewRequest(method string, urlStr string, body interface{}) (*ht
 		return nil, err
 	}
 
-	req.Header.Add("User-Agent", c.UserAgent)
+	req.Header.Set("User-Agent", c.UserAgent)
 	return req, nil
 }
 
@@ -115,8 +121,15 @@ func (c *Client) Do(request *http.Request, v interface{}) (*http.Response, error
 		return resp, err
 	}
 
+	var buf bytes.Buffer
+	buf.ReadFrom(resp.Body)
+	bufBytes := buf.Bytes()
+	reader := bytes.NewReader(bufBytes)
+	// Put back the body into response.Body so it can be ready again by the consumer
+	resp.Body = ioutil.NopCloser(reader)
+
 	if v != nil {
-		err = json.NewDecoder(resp.Body).Decode(v)
+		err = json.Unmarshal(bufBytes, &v)
 	}
 	return resp, err
 }
