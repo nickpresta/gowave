@@ -32,6 +32,8 @@ type Client struct {
 
 	// Services used to communicate with different parts of the Wave API
 	Businesses *BusinessesService
+	Currencies *CurrenciesService
+	Countries  *CountriesService
 }
 
 type ErrorResponse struct {
@@ -72,6 +74,8 @@ func NewClient(client *http.Client) *Client {
 
 	c := &Client{client: client, BaseURL: baseURL, UserAgent: userAgent}
 	c.Businesses = &BusinessesService{client: c}
+	c.Currencies = &CurrenciesService{client: c}
+	c.Countries = &CountriesService{client: c}
 
 	return c
 }

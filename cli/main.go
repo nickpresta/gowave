@@ -13,10 +13,18 @@ import (
 
 var (
 	clientId     = flag.String("id", "", "Client ID")
-	clientSecret = flag.String("secret", "", "Client Secret")
+	clientSecret = flag.String("secret", "", "Client secret")
+	accessToken  = flag.String("access", "", "Access token")
 	scope        = flag.String("scope", "basic", "Scope")
 	cachefile    = flag.String("cache", "cache.json", "Token cache file")
-	port         = flag.Int("port", 9001, "Webserver port")
+
+	businesses = flag.Bool("businesses", false, "LIST your businesses")
+	business   = flag.String("business", "", "GET your business. Takes the ID")
+	currencies = flag.Bool("currencies", false, "LIST the currencies")
+	currency   = flag.String("currency", "", "GET a currency. Takes the code")
+	countries  = flag.Bool("countries", false, "LIST the countries")
+	country    = flag.String("country", "", "GET a country. Takes the code")
+	provinces  = flag.String("provinces", "", "LIST the provinces for a country. Takes the country code")
 )
 
 var config *oauth.Config
@@ -49,21 +57,71 @@ func main() {
 	t := &oauth.Transport{
 		Config:    config,
 		Transport: http.DefaultTransport,
+		Token:     &oauth.Token{AccessToken: *accessToken},
 	}
-	_, err := config.TokenCache.Token()
-	if err != nil {
-		getToken(t)
+
+	if *accessToken == "" {
+		_, err := config.TokenCache.Token()
+		if err != nil {
+			getToken(t)
+		}
 	}
 
 	client := wave.NewClient(t.Client())
-	businesses, _, err := client.Businesses.List()
-	if err != nil {
-		log.Fatalf("Couldn't fetch businesses: %+v", err)
+
+	if *businesses {
+		businesses, _, err := client.Businesses.List()
+		fatal(err)
+		printResource(businesses)
 	}
 
-	b, err := json.MarshalIndent(businesses, "", "  ")
+	if *business != "" {
+		business, _, err := client.Businesses.Get(*business)
+		fatal(err)
+		printResource(business)
+	}
+
+	if *currencies {
+		currencies, _, err := client.Currencies.List()
+		fatal(err)
+		printResource(currencies)
+	}
+
+	if *currency != "" {
+		currency, _, err := client.Currencies.Get(*currency)
+		fatal(err)
+		printResource(currency)
+	}
+
+	if *countries {
+		countries, _, err := client.Countries.List()
+		fatal(err)
+		printResource(countries)
+	}
+
+	if *country != "" {
+		country, _, err := client.Countries.Get(*country)
+		fatal(err)
+		printResource(country)
+	}
+
+	if *provinces != "" {
+		provinces, _, err := client.Countries.Provinces(*provinces)
+		fatal(err)
+		printResource(provinces)
+	}
+}
+
+func fatal(err error) {
 	if err != nil {
-		log.Fatalf("Error decoding businesses: %+v\n", err)
+		log.Fatalf("Couldn't fetch: %+v", err)
+	}
+}
+
+func printResource(r interface{}) {
+	b, err := json.MarshalIndent(r, "", "  ")
+	if err != nil {
+		log.Fatalf("Error decoding currencies: %+v\n", err)
 	}
 	os.Stdout.Write(b)
 	fmt.Println()
