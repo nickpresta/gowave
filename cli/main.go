@@ -121,7 +121,7 @@ func fatal(err error) {
 func printResource(r interface{}) {
 	b, err := json.MarshalIndent(r, "", "  ")
 	if err != nil {
-		log.Fatalf("Error decoding currencies: %+v\n", err)
+		log.Fatalf("Error decoding resource: %+v\n", err)
 	}
 	os.Stdout.Write(b)
 	fmt.Println()
