@@ -70,4 +70,17 @@ func TestCountriesService(t *testing.T) {
 		So(err, ShouldEqual, nil)
 		So(provinces, ShouldResemble, p)
 	})
+
+	Convey("String method on Country", t, func() {
+		c := new(Country)
+		c.Name = "Canada"
+		c.CountryCode = "CA"
+		So(c.String(), ShouldEqual, "Canada (CA)")
+	})
+
+	Convey("String method on Province", t, func() {
+		p := new(Province)
+		p.Name = "Ontario"
+		So(p.String(), ShouldEqual, "Ontario")
+	})
 }

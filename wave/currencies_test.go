@@ -47,4 +47,12 @@ func TestCurrenciesService(t *testing.T) {
 		So(err, ShouldEqual, nil)
 		So(currency, ShouldResemble, currencyStruct())
 	})
+
+	Convey("String method on Currency", t, func() {
+		c := new(Currency)
+		c.Name = "Canadian dollar"
+		c.Code = "CAD"
+		So(c.String(), ShouldEqual, "CAD (Canadian dollar)")
+	})
+
 }

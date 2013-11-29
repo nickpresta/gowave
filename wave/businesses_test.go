@@ -47,4 +47,12 @@ func TestBusinessesService(t *testing.T) {
 		So(err, ShouldEqual, nil)
 		So(business, ShouldResemble, businessStruct())
 	})
+
+	Convey("String method on Business", t, func() {
+		b := new(Business)
+		b.CompanyName = "Company Test"
+		b.IsPersonalBusiness = true
+		b.Id = "id"
+		So(b.String(), ShouldEqual, "Company Test (id=id, personal=true)")
+	})
 }
