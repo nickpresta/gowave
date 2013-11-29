@@ -1,10 +1,10 @@
-# GoWave
+# Gowave
+
+[![Build Status](https://drone.io/github.com/NickPresta/gowave/status.png)](https://drone.io/github.com/NickPresta/gowave/latest)
+[coverage](https://drone.io/github.com/NickPresta/gowave/files/coverage.html)
+[documentation]()
 
 gowave is a Go client library for accessing the [Wave API](https://developer.waveapps.com).
-
-**Documentation:** COMING SOON  
-**Build Status:** COMING SOON  
-**Test Coverage:** COMING SOON  
 
 gowave requires Go version 1.1 or greater.
 
@@ -16,11 +16,8 @@ import "github.com/nickpresta/gowave/wave"
 
 ## Authentication
 
-The gowave library does not directly handle authentication. Instead, when
-creating a new client, pass an `http.Client` that can handle authentication for
-you.
-The easiest and recommended way to do this is using the [goauth2](https://code.google.com/p/goauth2/)
-library, but you can always use any other library that provides an `http.Client`.
+The gowave library does not directly handle authentication and relies on you to provide an `http.Client` that can handle authentication for you.
+The easiest and recommended way to do this is using the [goauth2](https://code.google.com/p/goauth2/) library.
 
 ```go
 t := &oauth.Transport{
