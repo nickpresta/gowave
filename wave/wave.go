@@ -18,7 +18,8 @@ const (
 	userAgent      = "gowave/" + version
 )
 
-type Timestamp time.Time
+type DateTime time.Time
+type Date time.Time
 
 type Client struct {
 	// HTTP client used to communicate with the API.
@@ -54,16 +55,16 @@ func (resp *ErrorResponse) Error() string {
 		resp.Response.Request.Method, resp.Response.Request.URL, resp.Response.StatusCode, resp.Err.Message)
 }
 
-func (t *Timestamp) UnmarshalJSON(b []byte) error {
+func (t *DateTime) UnmarshalJSON(b []byte) error {
 	v, err := time.Parse("2006-01-02T15:04:05", string(b[1:len(b)-1]))
 	if err != nil {
 		return err
 	}
-	*t = Timestamp(v)
+	*t = DateTime(v)
 	return nil
 }
 
-func (t Timestamp) MarshalJSON() ([]byte, error) {
+func (t DateTime) MarshalJSON() ([]byte, error) {
 	trueTime := time.Time(t)
 	if y := trueTime.Year(); y < 0 || y >= 10000 {
 		return nil, errors.New("Time.MarshalJSON: year outside of range [0,9999]")

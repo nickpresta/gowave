@@ -58,9 +58,9 @@ func TestErrorResponseFormat(t *testing.T) {
 	})
 }
 
-func TestTimestampUnmarshalJSON(t *testing.T) {
-	Convey("Unmarshalling JSON to a Timestamp", t, func() {
-		timestamp := Timestamp(time.Now())
+func TestDateTimeUnmarshalJSON(t *testing.T) {
+	Convey("Unmarshalling JSON to a DateTime", t, func() {
+		timestamp := DateTime(time.Now())
 
 		Convey("Should unmarshal valid JSON", func() {
 			err := timestamp.UnmarshalJSON([]byte(`"2013-08-19T09:18:32"`))
@@ -75,25 +75,25 @@ func TestTimestampUnmarshalJSON(t *testing.T) {
 			So(v.Second(), ShouldEqual, 32)
 		})
 
-		Convey("Unmarshalling JSON to Timestamp should return an error", func() {
+		Convey("Unmarshalling JSON to DateTime should return an error", func() {
 			err := timestamp.UnmarshalJSON([]byte(`invalid`))
 			So(err, ShouldNotEqual, nil)
 		})
 	})
 }
 
-func TestTimestampMarshalJSON(t *testing.T) {
-	Convey("Marshalling a Timestamp to JSON", t, func() {
-		Convey("Should marshal a valid Timestamp", func() {
-			timestamp := Timestamp(time.Date(2009, time.November, 10, 23, 4, 20, 0, time.UTC))
+func TestDateTimeMarshalJSON(t *testing.T) {
+	Convey("Marshalling a DateTime to JSON", t, func() {
+		Convey("Should marshal a valid DateTime", func() {
+			timestamp := DateTime(time.Date(2009, time.November, 10, 23, 4, 20, 0, time.UTC))
 			json, err := timestamp.MarshalJSON()
 
 			So(err, ShouldEqual, nil)
 			So(string(json), ShouldEqual, `"2009-11-10T23:04:20"`)
 		})
 
-		Convey("Marshalling an invalid Timestamp should return an error", func() {
-			timestamp := Timestamp(time.Date(-5, time.November, 10, 23, 4, 20, 0, time.UTC))
+		Convey("Marshalling an invalid DateTime should return an error", func() {
+			timestamp := DateTime(time.Date(-5, time.November, 10, 23, 4, 20, 0, time.UTC))
 			_, err := timestamp.MarshalJSON()
 			So(err, ShouldNotEqual, nil)
 		})

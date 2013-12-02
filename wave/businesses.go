@@ -24,8 +24,8 @@ type Business struct {
 	FaxNumber           *string   `json:"fax_number,omitempty"`
 	Website             *string   `json:"website,omitempty"`
 	IsPersonalBusiness  bool      `json:"is_personal_business,omitempty"`
-	DateCreated         Timestamp `json:"date_created,omitempty"`
-	DateModified        Timestamp `json:"date_modified,omitempty"`
+	DateCreated         DateTime `json:"date_created,omitempty"`
+	DateModified        DateTime `json:"date_modified,omitempty"`
 	BusinessTypeInfo    struct {
 		BusinessType       *string `json:"business_type,omitempty"`
 		BusinessSubtype    *string `json:"business_subtype,omitempty"`
@@ -102,11 +102,27 @@ func (service *BusinessesService) Create(business Business) (*Business, *http.Re
 	return b, resp, nil
 }
 
-// Update an existing business. You cannot create a business using this method.
+// Replace an existing business. You cannot create a business using this method.
 //
 // Wave API docs: http://waveaccounting.github.io/api/endpoints/businesses.html#put--businesses-(identity_business_id)-
-func (service *BusinessesService) Update(business Business) (*Business, *http.Response, error) {
+func (service *BusinessesService) Replace(business Business) (*Business, *http.Response, error) {
 	req, err := service.client.NewRequest("PUT", "businesses", business)
+	if err != nil {
+		return nil, nil, err
+	}
+	b := new(Business)
+	resp, err := service.client.Do(req, b)
+	if err != nil {
+		return nil, resp, err
+	}
+	return b, resp, nil
+}
+
+// Update an existing business. You cannot create a business using this method.
+//
+// Wave API docs: http://waveaccounting.github.io/api/endpoints/businesses.html#patch--businesses-(identity_business_id)-
+func (service *BusinessesService) Update(business Business) (*Business, *http.Response, error) {
+	req, err := service.client.NewRequest("PATCH", "businesses", business)
 	if err != nil {
 		return nil, nil, err
 	}
