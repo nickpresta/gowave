@@ -40,5 +40,3 @@ or endorsement in any way by the go-github contributors or Google Inc itself.
 ## License
 
 This client library is distributed under the BSD-style license found in the [LICENSE](./LICENSE).
-
-I have included a copy of other licenses from code used or other projects included in the [NOTICE](./NOTICE) file.
