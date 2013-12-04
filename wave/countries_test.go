@@ -3,18 +3,23 @@ package wave
 import (
 	"encoding/json"
 	"fmt"
-	. "github.com/smartystreets/goconvey/convey"
 	"net/http"
 	"testing"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 const (
-	countryJSON = `{"name":"Canada","country_code":"CA","currency_code":"CAD","url":"https://api.example.com/countries/CA/","provinces":[{"name":"Alberta","slug":"alberta"}]}`
-	countriesJSON = "["+countryJSON+"]"
 	provincesJSON = `[{"name":"Ontario","slug":"ontario"}]`
+	countryJSON   = `{
+		"name":"Canada",
+		"country_code":"CA",
+		"currency_code":"CAD",
+		"url":"https://api.example.com/countries/CA/",
+		"provinces":` + provincesJSON + "}"
+	countriesJSON = "[" + countryJSON + "]"
 )
 
-func countryStruct() *Country {
+func countryStructHelper() *Country {
 	var c Country
 	json.Unmarshal([]byte(countryJSON), &c)
 	return &c
@@ -27,6 +32,8 @@ func provincesStruct() []Province {
 }
 
 func TestCountriesService(t *testing.T) {
+	countryStruct := countryStructHelper()
+
 	Convey("LISTing all countries", t, func() {
 		setUp()
 		defer tearDown()
@@ -37,8 +44,8 @@ func TestCountriesService(t *testing.T) {
 		})
 
 		countries, _, err := client.Countries.List()
-		c := []Country{*countryStruct()}
-		So(err, ShouldEqual, nil)
+		c := []Country{*countryStruct}
+		So(err, ShouldBeNil)
 		So(countries, ShouldResemble, c)
 	})
 
@@ -52,11 +59,16 @@ func TestCountriesService(t *testing.T) {
 		})
 
 		country, _, err := client.Countries.Get("CA")
-		So(err, ShouldEqual, nil)
-		So(country, ShouldResemble, countryStruct())
+		So(err, ShouldBeNil)
+		So(country, ShouldResemble, countryStruct)
 	})
 
-	Convey("LISTing all provinces for a given country", t, func() {
+	Convey("GET a specific country with an invalid code", t, func() {
+		country, resp, err := client.Countries.Get("%")
+		checkInvalidURLError(country, resp, err)
+	})
+
+	Convey("LIST all provinces for a given country", t, func() {
 		setUp()
 		defer tearDown()
 
@@ -67,8 +79,13 @@ func TestCountriesService(t *testing.T) {
 
 		provinces, _, err := client.Countries.Provinces("CA")
 		p := provincesStruct()
-		So(err, ShouldEqual, nil)
+		So(err, ShouldBeNil)
 		So(provinces, ShouldResemble, p)
+	})
+
+	Convey("LIST all provinces for a given country with an invalid code", t, func() {
+		_, resp, err := client.Countries.Provinces("%")
+		checkInvalidURLError(nil, resp, err)
 	})
 
 	Convey("String method on Country", t, func() {

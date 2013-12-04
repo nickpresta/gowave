@@ -8,6 +8,8 @@ gowave is a Go client library for accessing the [Wave API](https://developer.wav
 
 gowave requires Go version 1.1 or greater.
 
+**This client library is in an ALPHA state.** There is no guarantee of interface stability until the Wave API is "final".
+
 ## Usage
 
 ```go

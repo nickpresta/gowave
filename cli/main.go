@@ -1,14 +1,16 @@
 package main
 
 import (
-	"code.google.com/p/goauth2/oauth"
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/nickpresta/gowave/wave"
+	"io"
 	"log"
 	"net/http"
 	"os"
+
+	"code.google.com/p/goauth2/oauth"
+	"github.com/nickpresta/gowave/wave"
 )
 
 var (
@@ -25,6 +27,8 @@ var (
 	countries  = flag.Bool("countries", false, "LIST the countries")
 	country    = flag.String("country", "", "GET a country. Takes the code")
 	provinces  = flag.String("provinces", "", "LIST the provinces for a country. Takes the country code")
+	user       = flag.Bool("user", true, "GET the currently authenticated user")
+	accounts   = flag.String("accounts", "", "GET the accounts for a business. Takes the ID")
 )
 
 var config *oauth.Config
@@ -70,51 +74,67 @@ func main() {
 	client := wave.NewClient(t.Client())
 
 	if *businesses {
-		businesses, _, err := client.Businesses.List()
-		fatal(err)
+		businesses, resp, err := client.Businesses.List()
+		fatal(resp, err)
 		printResource(businesses)
 	}
 
 	if *business != "" {
-		business, _, err := client.Businesses.Get(*business)
-		fatal(err)
+		business, resp, err := client.Businesses.Get(*business)
+		fatal(resp, err)
 		printResource(business)
 	}
 
 	if *currencies {
-		currencies, _, err := client.Currencies.List()
-		fatal(err)
+		currencies, resp, err := client.Currencies.List()
+		fatal(resp, err)
 		printResource(currencies)
 	}
 
 	if *currency != "" {
-		currency, _, err := client.Currencies.Get(*currency)
-		fatal(err)
+		currency, resp, err := client.Currencies.Get(*currency)
+		fatal(resp, err)
 		printResource(currency)
 	}
 
 	if *countries {
-		countries, _, err := client.Countries.List()
-		fatal(err)
+		countries, resp, err := client.Countries.List()
+		fatal(resp, err)
 		printResource(countries)
 	}
 
 	if *country != "" {
-		country, _, err := client.Countries.Get(*country)
-		fatal(err)
+		country, resp, err := client.Countries.Get(*country)
+		fatal(resp, err)
 		printResource(country)
 	}
 
 	if *provinces != "" {
-		provinces, _, err := client.Countries.Provinces(*provinces)
-		fatal(err)
+		provinces, resp, err := client.Countries.Provinces(*provinces)
+		fatal(resp, err)
 		printResource(provinces)
+	}
+
+	if *user {
+		user, resp, err := client.Users.Get()
+		fatal(resp, err)
+		printResource(user)
+	}
+
+	if *accounts != "" {
+		accounts, resp, err := client.Accounts.List(*accounts)
+		fatal(resp, err)
+		printResource(accounts)
 	}
 }
 
-func fatal(err error) {
+func fatal(resp *http.Response, err error) {
 	if err != nil {
-		log.Fatalf("Couldn't fetch: %+v", err)
+		log.Printf("Couldn't fetch: %+v", err)
+		log.Printf("Raw response from %v?access_token=%v :\n", resp.Request.URL, *accessToken)
+		io.Copy(os.Stderr, resp.Body)
+		log.Println()
+		os.Exit(1)
 	}
 }
 

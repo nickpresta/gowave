@@ -14,8 +14,8 @@ type CountriesService struct {
 
 // Province represents a province for a given country.
 type Province struct {
-	Name string `json:"name,omitempty"`
-	Slug string `json:"slug,omitempty"`
+	Name string `json:"name"`
+	Slug string `json:"slug"`
 }
 
 func (p *Province) String() string {
@@ -26,7 +26,7 @@ func (p *Province) String() string {
 type Country struct {
 	URL          string     `json:"url,omitempty"`
 	Name         string     `json:"name,omitempty"`
-	CountryCode  string     `json:"country_code",omitempty`
+	CountryCode  string     `json:"country_code,omitempty"`
 	CurrencyCode string     `json:"currency_code,omitempty"`
 	Provinces    []Province `json:"provinces,omitempty"`
 }

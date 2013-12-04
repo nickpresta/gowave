@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -33,14 +32,11 @@ type Client struct {
 	UserAgent string
 
 	// Services used to communicate with different parts of the Wave API
+	Accounts   *AccountsService
 	Businesses *BusinessesService
-	Currencies *CurrenciesService
 	Countries  *CountriesService
-}
-
-type Response struct {
-	*http.Response
-	RawBody io.ReadCloser
+	Currencies *CurrenciesService
+	Users      *UsersService
 }
 
 type ErrorResponse struct {
@@ -72,6 +68,23 @@ func (t DateTime) MarshalJSON() ([]byte, error) {
 	return []byte(trueTime.Format(`"2006-01-02T15:04:05"`)), nil
 }
 
+func (d *Date) UnmarshalJSON(b []byte) error {
+	v, err := time.Parse("2006-01-02", string(b[1:len(b)-1]))
+	if err != nil {
+		return err
+	}
+	*d = Date(v)
+	return nil
+}
+
+func (d Date) MarshalJSON() ([]byte, error) {
+	trueTime := time.Time(d)
+	if y := trueTime.Year(); y < 0 || y >= 10000 {
+		return nil, errors.New("Time.MarshalJSON: year outside of range [0,9999]")
+	}
+	return []byte(trueTime.Format(`"2006-01-02"`)), nil
+}
+
 func NewClient(client *http.Client) *Client {
 	if client == nil {
 		client = http.DefaultClient
@@ -80,9 +93,11 @@ func NewClient(client *http.Client) *Client {
 	baseURL, _ := url.Parse(defaultBaseURL)
 
 	c := &Client{client: client, BaseURL: baseURL, UserAgent: userAgent}
+	c.Accounts = &AccountsService{client: c}
 	c.Businesses = &BusinessesService{client: c}
-	c.Currencies = &CurrenciesService{client: c}
 	c.Countries = &CountriesService{client: c}
+	c.Currencies = &CurrenciesService{client: c}
+	c.Users = &UsersService{client: c}
 
 	return c
 }
@@ -145,4 +160,22 @@ func CheckResponse(resp *http.Response) error {
 		json.Unmarshal(data, errorResponse)
 	}
 	return errorResponse
+}
+
+func Bool(v bool) *bool {
+	p := new(bool)
+	*p = v
+	return p
+}
+
+func Int(v int) *int {
+	p := new(int)
+	*p = v
+	return p
+}
+
+func String(v string) *string {
+	p := new(string)
+	*p = v
+	return p
 }

@@ -2,14 +2,15 @@ package wave
 
 import (
 	"fmt"
-	. "github.com/smartystreets/goconvey/convey"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 var (
@@ -42,6 +43,16 @@ func tearDown() {
 	server.Close()
 }
 
+func checkInvalidURLError(v interface{}, resp *http.Response, err error) {
+	So(v, ShouldBeNil)
+	So(resp, ShouldBeNil)
+	So(err, ShouldNotBeNil)
+
+	typeErr, ok := err.(*url.Error)
+	So(ok, ShouldBeTrue)
+	So(typeErr.Op, ShouldEqual, "parse")
+}
+
 func TestErrorResponseFormat(t *testing.T) {
 	Convey("ErrorResponse should output with a specific format", t, func() {
 		url, _ := url.Parse("http://example.com/")
@@ -64,7 +75,7 @@ func TestDateTimeUnmarshalJSON(t *testing.T) {
 
 		Convey("Should unmarshal valid JSON", func() {
 			err := timestamp.UnmarshalJSON([]byte(`"2013-08-19T09:18:32"`))
-			So(err, ShouldEqual, nil)
+			So(err, ShouldBeNil)
 
 			v := time.Time(timestamp)
 			So(v.Year(), ShouldEqual, 2013)
@@ -77,7 +88,46 @@ func TestDateTimeUnmarshalJSON(t *testing.T) {
 
 		Convey("Unmarshalling JSON to DateTime should return an error", func() {
 			err := timestamp.UnmarshalJSON([]byte(`invalid`))
-			So(err, ShouldNotEqual, nil)
+			So(err, ShouldNotBeNil)
+		})
+	})
+}
+
+func TestDateMarshalJSON(t *testing.T) {
+	Convey("Marshalling a Date to JSON", t, func() {
+		Convey("Should marshal a valid Date", func() {
+			date := Date(time.Date(2009, time.November, 10, 0, 0, 0, 0, time.UTC))
+			json, err := date.MarshalJSON()
+
+			So(err, ShouldBeNil)
+			So(string(json), ShouldEqual, `"2009-11-10"`)
+		})
+
+		Convey("Marshalling an invalid Date should return an error", func() {
+			date := Date(time.Date(-5, time.November, 10, 0, 0, 0, 0, time.UTC))
+			_, err := date.MarshalJSON()
+			So(err, ShouldNotBeNil)
+		})
+	})
+}
+
+func TestDateUnmarshalJSON(t *testing.T) {
+	Convey("Unmarshalling JSON to a Date", t, func() {
+		date := Date(time.Now())
+
+		Convey("Should unmarshal valid JSON", func() {
+			err := date.UnmarshalJSON([]byte(`"2013-08-19"`))
+			So(err, ShouldBeNil)
+
+			v := time.Time(date)
+			So(v.Year(), ShouldEqual, 2013)
+			So(v.Month().String(), ShouldEqual, "August")
+			So(v.Day(), ShouldEqual, 19)
+		})
+
+		Convey("Unmarshalling JSON to Date should return an error", func() {
+			err := date.UnmarshalJSON([]byte(`invalid`))
+			So(err, ShouldNotBeNil)
 		})
 	})
 }
@@ -88,14 +138,14 @@ func TestDateTimeMarshalJSON(t *testing.T) {
 			timestamp := DateTime(time.Date(2009, time.November, 10, 23, 4, 20, 0, time.UTC))
 			json, err := timestamp.MarshalJSON()
 
-			So(err, ShouldEqual, nil)
+			So(err, ShouldBeNil)
 			So(string(json), ShouldEqual, `"2009-11-10T23:04:20"`)
 		})
 
 		Convey("Marshalling an invalid DateTime should return an error", func() {
 			timestamp := DateTime(time.Date(-5, time.November, 10, 23, 4, 20, 0, time.UTC))
 			_, err := timestamp.MarshalJSON()
-			So(err, ShouldNotEqual, nil)
+			So(err, ShouldNotBeNil)
 		})
 	})
 }
@@ -130,7 +180,7 @@ func TestNewRequest(t *testing.T) {
 		req, err := c.NewRequest("GET", inURL, inBody)
 
 		Convey("Error should be nil", func() {
-			So(err, ShouldEqual, nil)
+			So(err, ShouldBeNil)
 		})
 
 		Convey("Request URL should be correct", func() {
@@ -143,7 +193,7 @@ func TestNewRequest(t *testing.T) {
 
 		Convey("Request Body should be JSON serialized", func() {
 			body, err := ioutil.ReadAll(req.Body)
-			So(err, ShouldEqual, nil)
+			So(err, ShouldBeNil)
 			So(string(body), ShouldEqual, outBody)
 		})
 	})
@@ -153,12 +203,12 @@ func TestNewRequest(t *testing.T) {
 
 		Convey("Passing an invalid URL", func() {
 			_, err := c.NewRequest("GET", "%gh&%ij", nil)
-			So(err, ShouldNotEqual, nil)
+			So(err, ShouldNotBeNil)
 		})
 
 		Convey("Passing invalid body", func() {
 			_, err := c.NewRequest("GET", "foo", func() {})
-			So(err, ShouldNotEqual, nil)
+			So(err, ShouldNotBeNil)
 		})
 	})
 }
@@ -174,7 +224,7 @@ func TestDo(t *testing.T) {
 		req, _ := client.NewRequest("GET", "/", nil)
 		body := new(data)
 		_, err := client.Do(req, body)
-		So(err, ShouldEqual, nil)
+		So(err, ShouldBeNil)
 		So(body, ShouldResemble, &data{I: 1})
 	})
 	Convey("Making a request with a bad response", t, func() {
@@ -185,12 +235,12 @@ func TestDo(t *testing.T) {
 		})
 		req, _ := client.NewRequest("GET", "/", nil)
 		resp, err := client.Do(req, nil)
-		So(err, ShouldNotEqual, nil)
+		So(err, ShouldNotBeNil)
 		So(resp.StatusCode, ShouldEqual, http.StatusNotFound)
 	})
 	Convey("Passing in a bad request", t, func() {
 		_, err := client.Do(&http.Request{}, nil)
-		So(err, ShouldNotEqual, nil)
+		So(err, ShouldNotBeNil)
 	})
 }
 
@@ -202,7 +252,7 @@ func TestCheckResponse(t *testing.T) {
 				Body:       ioutil.NopCloser(strings.NewReader(`{"error": {"message":"Error"}}`)),
 			}
 			err := CheckResponse(resp).(*ErrorResponse)
-			So(err, ShouldNotEqual, nil)
+			So(err, ShouldNotBeNil)
 			So(err.Response.StatusCode, ShouldEqual, http.StatusNotFound)
 			So(err.Err.Message, ShouldEqual, "Error")
 		})
@@ -212,7 +262,55 @@ func TestCheckResponse(t *testing.T) {
 				Body:       ioutil.NopCloser(strings.NewReader(`{}`)),
 			}
 			err := CheckResponse(resp)
-			So(err, ShouldEqual, nil)
+			So(err, ShouldBeNil)
 		})
+	})
+}
+
+func TestTypeHelpers(t *testing.T) {
+	Convey("String should return a pointer to a string", t, func() {
+		v := reflect.ValueOf(String("example"))
+		So(v.Kind(), ShouldEqual, reflect.Ptr)
+		So(v.IsNil(), ShouldBeFalse)
+		So(reflect.Indirect(v).String(), ShouldEqual, "example")
+
+		v = reflect.ValueOf(String(""))
+		So(v.Kind(), ShouldEqual, reflect.Ptr)
+		So(v.IsNil(), ShouldBeFalse)
+		So(reflect.Indirect(v).String(), ShouldEqual, "")
+	})
+
+	Convey("Bool should return a pointer to a bool", t, func() {
+		v := reflect.ValueOf(Bool(true))
+		So(v.Kind(), ShouldEqual, reflect.Ptr)
+		So(v.IsNil(), ShouldBeFalse)
+		So(reflect.Indirect(v).Bool(), ShouldEqual, true)
+
+		v = reflect.ValueOf(Bool(false))
+		So(v.Kind(), ShouldEqual, reflect.Ptr)
+		So(v.IsNil(), ShouldBeFalse)
+		So(reflect.Indirect(v).Bool(), ShouldEqual, false)
+	})
+
+	Convey("Int should return a pointer to an int", t, func() {
+		v := reflect.ValueOf(Int(1))
+		So(v.Kind(), ShouldEqual, reflect.Ptr)
+		So(v.IsNil(), ShouldBeFalse)
+		So(reflect.Indirect(v).Int(), ShouldEqual, 1)
+
+		v = reflect.ValueOf(Int(0))
+		So(v.Kind(), ShouldEqual, reflect.Ptr)
+		So(v.IsNil(), ShouldBeFalse)
+		So(reflect.Indirect(v).Int(), ShouldEqual, 0)
+
+		v = reflect.ValueOf(Int(-1))
+		So(v.Kind(), ShouldEqual, reflect.Ptr)
+		So(v.IsNil(), ShouldBeFalse)
+		So(reflect.Indirect(v).Int(), ShouldEqual, -1)
+
+		v = reflect.ValueOf(Int(42))
+		So(v.Kind(), ShouldEqual, reflect.Ptr)
+		So(v.IsNil(), ShouldBeFalse)
+		So(reflect.Indirect(v).Int(), ShouldEqual, 42)
 	})
 }

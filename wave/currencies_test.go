@@ -3,34 +3,37 @@ package wave
 import (
 	"encoding/json"
 	"fmt"
-	. "github.com/smartystreets/goconvey/convey"
 	"net/http"
 	"testing"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
-func currencyJSON() string {
-	return `{"url":"https://api.example.com/currencies/CAD/","code":"CAD","symbol":"$","name":"Canadian dollar"}`
-}
-
-func currencyStruct() *Currency {
-	var c Currency
-	json.Unmarshal([]byte(currencyJSON()), &c)
-	return &c
-}
+const (
+	expectedCurrencyJSON = `{
+		"url":"https://api.example.com/currencies/CAD/",
+		"code":"CAD",
+		"symbol":"$",
+		"name":"Canadian dollar"
+	}`
+	expectedCurrenciesJSON = "[" + expectedCurrencyJSON + "]"
+)
 
 func TestCurrenciesService(t *testing.T) {
+	expectedCurrencyStruct := new(Currency)
+	json.Unmarshal([]byte(expectedCurrencyJSON), expectedCurrencyStruct)
+
 	Convey("LISTing all currencies", t, func() {
 		setUp()
 		defer tearDown()
 
 		mux.HandleFunc("/currencies", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "GET")
-			fmt.Fprint(w, "["+currencyJSON()+"]")
+			fmt.Fprint(w, expectedCurrenciesJSON)
 		})
 
 		currencies, _, err := client.Currencies.List()
-		c := []Currency{*currencyStruct()}
-		So(err, ShouldEqual, nil)
+		c := []Currency{*expectedCurrencyStruct}
+		So(err, ShouldBeNil)
 		So(currencies, ShouldResemble, c)
 	})
 
@@ -40,12 +43,17 @@ func TestCurrenciesService(t *testing.T) {
 
 		mux.HandleFunc("/currencies/1", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "GET")
-			fmt.Fprint(w, currencyJSON())
+			fmt.Fprint(w, expectedCurrencyJSON)
 		})
 
 		currency, _, err := client.Currencies.Get("1")
-		So(err, ShouldEqual, nil)
-		So(currency, ShouldResemble, currencyStruct())
+		So(err, ShouldBeNil)
+		So(currency, ShouldResemble, expectedCurrencyStruct)
+	})
+
+	Convey("GET a specific currency with an invalid ID", t, func() {
+		currency, resp, err := client.Currencies.Get("%")
+		checkInvalidURLError(currency, resp, err)
 	})
 
 	Convey("String method on Currency", t, func() {
