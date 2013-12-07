@@ -34,9 +34,9 @@ const (
 				"url":"https://api.example.com/businesses/f99948d3-a16e-4082-8f3c-824f8cba6377/"
 			}
 		],
-		"date_created":"2013-11-28T15:58:02",
-		"date_modified":"2013-11-28T15:58:02",
-		"last_login":"2013-11-28T15:58:03"
+		"date_created":"2013-11-28T15:58:02+00:00",
+		"date_modified":"2013-11-28T15:58:02+00:00",
+		"last_login":"2013-11-28T15:58:03+00:00"
 	}`
 )
 

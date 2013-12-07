@@ -20,8 +20,8 @@ const (
 		"fax_number":null,
 		"website":null,
 		"is_personal_business":false,
-		"date_created":"0001-01-01T00:00:00",
-		"date_modified":"0001-01-01T00:00:00",
+		"date_created":"0001-01-01T00:00:00+00:00",
+		"date_modified":"0001-01-01T00:00:00+00:00",
 		"business_type_info":{
 			"business_type":null,
 			"business_subtype":null,

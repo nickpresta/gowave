@@ -29,8 +29,8 @@ const (
 		"is_currency_editable":true,
 		"is_name_editable":true,
 		"is_payment_editable":true,
-		"date_created":"2013-06-29T18:03:19",
-		"date_modified":"2013-06-30T18:03:19"
+		"date_created":"2013-06-29T18:03:19+00:00",
+		"date_modified":"2013-06-30T18:03:19+00:00"
 	}`
 	expectedAccountsJSON = "[" + expectedAccountJSON + "]"
 )
@@ -68,13 +68,13 @@ func TestAccountsService(t *testing.T) {
 			fmt.Fprint(w, expectedAccountJSON)
 		})
 
-		account, _, err := client.Accounts.Get("1", "1")
+		account, _, err := client.Accounts.Get("1", 1)
 		So(err, ShouldBeNil)
 		So(account, ShouldResemble, expectedAccountStruct)
 	})
 
 	Convey("GET a specific Account with an invalid ID", t, func() {
-		account, resp, err := client.Accounts.Get("%", "%")
+		account, resp, err := client.Accounts.Get("%", 1)
 		checkInvalidURLError(account, resp, err)
 	})
 
@@ -108,13 +108,13 @@ func TestAccountsService(t *testing.T) {
 		})
 
 		a := Account{}
-		account, _, err := client.Accounts.Replace("1", "1", a)
+		account, _, err := client.Accounts.Replace("1", 1, a)
 		So(err, ShouldBeNil)
 		So(account, ShouldResemble, expectedAccountStruct)
 	})
 
 	Convey("REPLACE an Account with an invalid ID", t, func() {
-		account, resp, err := client.Accounts.Replace("%", "%", Account{})
+		account, resp, err := client.Accounts.Replace("%", 1, Account{})
 		checkInvalidURLError(account, resp, err)
 	})
 
@@ -128,13 +128,13 @@ func TestAccountsService(t *testing.T) {
 		})
 
 		a := Account{}
-		account, _, err := client.Accounts.Update("1", "1", a)
+		account, _, err := client.Accounts.Update("1", 1, a)
 		So(err, ShouldEqual, nil)
 		So(account, ShouldResemble, expectedAccountStruct)
 	})
 
 	Convey("UPDATE an Account with an invalid ID", t, func() {
-		account, resp, err := client.Accounts.Update("%", "%", Account{})
+		account, resp, err := client.Accounts.Update("%", 1, Account{})
 		checkInvalidURLError(account, resp, err)
 	})
 
@@ -147,12 +147,12 @@ func TestAccountsService(t *testing.T) {
 			w.WriteHeader(http.StatusNoContent)
 		})
 
-		_, err := client.Accounts.Delete("1", "1")
+		_, err := client.Accounts.Delete("1", 1)
 		So(err, ShouldEqual, nil)
 	})
 
 	Convey("DELETE a specific Account with an invalid ID", t, func() {
-		resp, err := client.Accounts.Delete("%", "%")
+		resp, err := client.Accounts.Delete("%", 1)
 		checkInvalidURLError(nil, resp, err)
 	})
 

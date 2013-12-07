@@ -3,13 +3,17 @@ package wave
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"os"
 	"reflect"
 	"strings"
 	"testing"
 	"time"
+
+	"code.google.com/p/goauth2/oauth"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -20,9 +24,53 @@ var (
 	// client is the Wave client being tested.
 	client *Client
 
+	// integrationClient is the client used to actually hit the Wave API
+	integrationClient *Client
+
 	// server is a test HTTP server used to provide mock API responses.
 	server *httptest.Server
 )
+
+type CachedContent struct {
+	Response *http.Response
+	Error    error
+}
+
+type CachedResponseTransport struct {
+	Transport http.RoundTripper
+	cache     map[string]*CachedContent
+}
+
+func NewCachedResponseTransport() *CachedResponseTransport {
+	return &CachedResponseTransport{cache: make(map[string]*CachedContent)}
+}
+
+func (t *CachedResponseTransport) RoundTrip(r *http.Request) (*http.Response, error) {
+	u, err := url.Parse(r.URL.String())
+	if err != nil {
+		return nil, err
+	}
+	key := fmt.Sprintf("%v %v", r.Method, u.String())
+
+	cachedContent, inCache := t.cache[key]
+	if inCache {
+		log.Printf("Found '%v' in cache\n", key)
+		return cachedContent.Response, cachedContent.Error
+	}
+
+	log.Printf("Not in cache; making round trip for '%v'\n", key)
+	resp, err := t.Transport.RoundTrip(r)
+	if err != nil {
+		return nil, err
+	}
+
+	if code := resp.StatusCode; code >= 400 || code < 300 {
+		log.Printf("Storing in cache: '%v'\n", key)
+		t.cache[key] = &CachedContent{Response: resp, Error: err}
+	}
+
+	return resp, err
+}
 
 type data struct {
 	I int
@@ -37,6 +85,21 @@ func setUp() {
 	client = NewClient(nil)
 	url, _ := url.Parse(server.URL)
 	client.BaseURL = url
+}
+
+func setUpIntegrations() {
+	if os.Getenv("WAVE_API_ACCESS_TOKEN") == "" {
+		panic("You must provide a WAVE_API_ACCESS_TOKEN environment variable for integration tests")
+	}
+
+	transport := &oauth.Transport{
+		Config:    &oauth.Config{},
+		Transport: http.DefaultTransport,
+		Token:     &oauth.Token{AccessToken: os.Getenv("WAVE_API_ACCESS_TOKEN")},
+	}
+	cachedTransport := NewCachedResponseTransport()
+	cachedTransport.Transport = transport
+	integrationClient = NewClient(&http.Client{Transport: cachedTransport})
 }
 
 func tearDown() {
@@ -74,7 +137,7 @@ func TestDateTimeUnmarshalJSON(t *testing.T) {
 		timestamp := DateTime(time.Now())
 
 		Convey("Should unmarshal valid JSON", func() {
-			err := timestamp.UnmarshalJSON([]byte(`"2013-08-19T09:18:32"`))
+			err := timestamp.UnmarshalJSON([]byte(`"2013-08-19T09:18:32+00:00"`))
 			So(err, ShouldBeNil)
 
 			v := time.Time(timestamp)
@@ -139,7 +202,7 @@ func TestDateTimeMarshalJSON(t *testing.T) {
 			json, err := timestamp.MarshalJSON()
 
 			So(err, ShouldBeNil)
-			So(string(json), ShouldEqual, `"2009-11-10T23:04:20"`)
+			So(string(json), ShouldEqual, `"2009-11-10T23:04:20+00:00"`)
 		})
 
 		Convey("Marshalling an invalid DateTime should return an error", func() {

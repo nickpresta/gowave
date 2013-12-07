@@ -52,7 +52,7 @@ func (resp *ErrorResponse) Error() string {
 }
 
 func (t *DateTime) UnmarshalJSON(b []byte) error {
-	v, err := time.Parse("2006-01-02T15:04:05", string(b[1:len(b)-1]))
+	v, err := time.Parse("2006-01-02T15:04:05+00:00", string(b[1:len(b)-1]))
 	if err != nil {
 		return err
 	}
@@ -65,7 +65,7 @@ func (t DateTime) MarshalJSON() ([]byte, error) {
 	if y := trueTime.Year(); y < 0 || y >= 10000 {
 		return nil, errors.New("Time.MarshalJSON: year outside of range [0,9999]")
 	}
-	return []byte(trueTime.Format(`"2006-01-02T15:04:05"`)), nil
+	return []byte(trueTime.Format(`"2006-01-02T15:04:05+00:00"`)), nil
 }
 
 func (d *Date) UnmarshalJSON(b []byte) error {
@@ -123,6 +123,7 @@ func (c *Client) NewRequest(method string, urlStr string, body interface{}) (*ht
 	}
 
 	req.Header.Set("User-Agent", c.UserAgent)
+	req.Header.Set("Content-Type", "application/json")
 	return req, nil
 }
 

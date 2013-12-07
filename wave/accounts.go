@@ -56,8 +56,8 @@ func (service *AccountsService) List(businessId string) ([]Account, *http.Respon
 // Get an existing account for a given business.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/accounts.html#get--businesses-{business_id}-accounts-{account_id}-
-func (service *AccountsService) Get(businessId string, accountId string) (*Account, *http.Response, error) {
-	url := fmt.Sprintf("businesses/%s/accounts/%s", businessId, accountId)
+func (service *AccountsService) Get(businessId string, accountId uint64) (*Account, *http.Response, error) {
+	url := fmt.Sprintf("businesses/%v/accounts/%v", businessId, accountId)
 	req, err := service.client.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
@@ -90,8 +90,8 @@ func (service *AccountsService) Create(businessId string, account Account) (*Acc
 // Replace an existing account. You cannot create an account using this method.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/accounts.html#put--businesses-{business_id}-accounts-{account_id}-
-func (service *AccountsService) Replace(businessId string, accountId string, account Account) (*Account, *http.Response, error) {
-	url := fmt.Sprintf("businesses/%s/accounts/%s", businessId, accountId)
+func (service *AccountsService) Replace(businessId string, accountId uint64, account Account) (*Account, *http.Response, error) {
+	url := fmt.Sprintf("businesses/%v/accounts/%v", businessId, accountId)
 	req, err := service.client.NewRequest("PUT", url, account)
 	if err != nil {
 		return nil, nil, err
@@ -107,8 +107,8 @@ func (service *AccountsService) Replace(businessId string, accountId string, acc
 // Update an existing account. You cannot create an account using this method.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/accounts.html#patch--businesses-{business_id}-accounts-{account_id}-
-func (service *AccountsService) Update(businessId string, accountId string, account Account) (*Account, *http.Response, error) {
-	url := fmt.Sprintf("businesses/%s/accounts/%s", businessId, accountId)
+func (service *AccountsService) Update(businessId string, accountId uint64, account Account) (*Account, *http.Response, error) {
+	url := fmt.Sprintf("businesses/%v/accounts/%v", businessId, accountId)
 	req, err := service.client.NewRequest("PATCH", url, account)
 	if err != nil {
 		return nil, nil, err
@@ -124,8 +124,8 @@ func (service *AccountsService) Update(businessId string, accountId string, acco
 // Delete an existing account. The `can_delete` attribute of an account determines if it can be deleted.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/accounts.html#delete--businesses-{business_id}-accounts-{account_id}-
-func (service *AccountsService) Delete(businessId string, accountId string) (*http.Response, error) {
-	url := fmt.Sprintf("businesses/%s/accounts/%s", businessId, accountId)
+func (service *AccountsService) Delete(businessId string, accountId uint64) (*http.Response, error) {
+	url := fmt.Sprintf("businesses/%v/accounts/%v", businessId, accountId)
 	req, err := service.client.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return nil, err
