@@ -24,7 +24,7 @@ func (c *Currency) String() string {
 	return fmt.Sprintf("%v (%v)", c.Code, c.Name)
 }
 
-// Lists all currencies available in Wave.
+// List all currencies available in Wave.
 //
 // Wave API docs: http://waveaccounting.github.io/api/endpoints/currencies.html#get--currencies-
 func (service *CurrenciesService) List() ([]Currency, *http.Response, error) {
@@ -44,7 +44,7 @@ func (service *CurrenciesService) List() ([]Currency, *http.Response, error) {
 //
 // Wave API docs: http://waveaccounting.github.io/api/endpoints/currencies.html#get--currencies-(code)-
 func (service *CurrenciesService) Get(code string) (*Currency, *http.Response, error) {
-	u := fmt.Sprintf("currencies/%s", code)
+	u := fmt.Sprintf("currencies/%v", code)
 	req, err := service.client.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, nil, err

@@ -1,6 +1,8 @@
 package wave
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -114,6 +116,17 @@ func checkInvalidURLError(v interface{}, resp *http.Response, err error) {
 	typeErr, ok := err.(*url.Error)
 	So(ok, ShouldBeTrue)
 	So(typeErr.Op, ShouldEqual, "parse")
+}
+
+func checkMarshalJSON(v interface{}, e string) {
+	want, err := json.Marshal(v)
+	So(err, ShouldBeNil)
+
+	given := new(bytes.Buffer)
+	err = json.Compact(given, []byte(e))
+	So(err, ShouldBeNil)
+
+	So(given.String(), ShouldEqual, string(want))
 }
 
 func TestErrorResponseFormat(t *testing.T) {

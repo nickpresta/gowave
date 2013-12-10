@@ -143,7 +143,7 @@ func TestBusinessesService(t *testing.T) {
 		b := new(Business)
 		b.CompanyName = "Company Test"
 		b.IsPersonalBusiness = true
-		b.Id = "id"
+		b.ID = "id"
 		So(b.String(), ShouldEqual, "Company Test (id=id, personal=true)")
 	})
 }

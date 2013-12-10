@@ -35,7 +35,7 @@ func (c *Country) String() string {
 	return fmt.Sprintf("%v (%v)", c.Name, c.CountryCode)
 }
 
-// Lists all countries available in Wave.
+// List all countries available in Wave.
 //
 // Wave API docs: http://waveaccounting.github.io/api/endpoints/geography.html#get--countries-
 func (service *CountriesService) List() ([]Country, *http.Response, error) {
@@ -55,7 +55,7 @@ func (service *CountriesService) List() ([]Country, *http.Response, error) {
 //
 // Wave API docs: http://waveaccounting.github.io/api/endpoints/geography.html#get--countries-(country_code)-
 func (service *CountriesService) Get(code string) (*Country, *http.Response, error) {
-	u := fmt.Sprintf("countries/%s", code)
+	u := fmt.Sprintf("countries/%v", code)
 	req, err := service.client.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, nil, err
@@ -68,11 +68,11 @@ func (service *CountriesService) Get(code string) (*Country, *http.Response, err
 	return country, resp, nil
 }
 
-// Get a specific province for a given country.
+// Provinces gets a specific province for a given country.
 //
 // Wave API docs: http://waveaccounting.github.io/api/endpoints/geography.html#get--countries-(country_code)-provinces-
 func (service *CountriesService) Provinces(code string) ([]Province, *http.Response, error) {
-	u := fmt.Sprintf("countries/%s/provinces", code)
+	u := fmt.Sprintf("countries/%v/provinces", code)
 	req, err := service.client.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, nil, err

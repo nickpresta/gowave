@@ -15,14 +15,14 @@ func TestAccountsServiceIntegration(t *testing.T) {
 	SkipConvey("Full end-to-end Account integration", t, func() {
 		businesses, _, err := integrationClient.Businesses.List()
 		So(err, ShouldBeNil)
-		bId := businesses[0].Id
+		bID := businesses[0].ID
 
-		accounts, _, err := integrationClient.Accounts.List(bId)
+		accounts, _, err := integrationClient.Accounts.List(bID)
 		So(err, ShouldBeNil)
 		So(accounts, ShouldNotBeNil)
 
-		aId := accounts[0].Id
-		account, _, err := integrationClient.Accounts.Get(bId, aId)
+		aID := accounts[0].ID
+		account, _, err := integrationClient.Accounts.Get(bId, aID)
 		So(err, ShouldBeNil)
 		So(account, ShouldNotBeNil)
 
@@ -32,7 +32,7 @@ func TestAccountsServiceIntegration(t *testing.T) {
 			Currency:              &Currency{Code: "JPY"},
 			StandardAccountNumber: Int(1006),
 		}
-		account, _, err = integrationClient.Accounts.Create(bId, a)
+		account, _, err = integrationClient.Accounts.Create(bID, a)
 		So(err, ShouldBeNil)
 		So(account, ShouldNotBeNil)
 		So(*account.Name, ShouldEqual, *a.Name)
@@ -40,7 +40,7 @@ func TestAccountsServiceIntegration(t *testing.T) {
 		So(account.Currency.Code, ShouldEqual, a.Currency.Code)
 		So(*account.StandardAccountNumber, ShouldEqual, *a.StandardAccountNumber)
 
-		resp, err := integrationClient.Accounts.Delete(bId, account.Id)
+		resp, err := integrationClient.Accounts.Delete(bID, account.ID)
 		So(err, ShouldBeNil)
 		So(resp.StatusCode, ShouldEqual, http.StatusNoContent)
 	})

@@ -14,7 +14,7 @@ type UsersService struct {
 
 // User represents a Wave user.
 type User struct {
-	Id           *string   `json:"id,omitempty"`
+	ID           *string   `json:"id,omitempty"`
 	URL          *string   `json:"url,omitempty"`
 	FirstName    *string   `json:"first_name,omitempty"`
 	LastName     *string   `json:"first_name,omitempty"`
@@ -30,11 +30,15 @@ type User struct {
 		DateOfBirth *Date `json:"date_of_birth,omitempty"`
 	} `json:"profile"`
 	Businesses []struct {
-		Id  *string `json:"id,omitempty"`
+		ID  *string `json:"id,omitempty"`
 		URL *string `json:"url,omitempty"`
 	} `json:"businesses"`
 }
 
+// FullName returns the full name of a customer.
+//
+// Given a first and last name, FullName will return 'First Last'.
+// Given either a first or last name, FullName will return whichever is non-empty.
 func (u *User) FullName() string {
 	if u.FirstName == nil && u.LastName == nil {
 		return ""

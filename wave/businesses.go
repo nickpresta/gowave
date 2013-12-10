@@ -12,45 +12,33 @@ type BusinessesService struct {
 	client *Client
 }
 
+// BusinessTypeInfo represents the type of Wave business.
+type BusinessTypeInfo struct {
+	BusinessType       *string `json:"business_type,omitempty"`
+	BusinessSubtype    *string `json:"business_subtype,omitempty"`
+	OrganizationalType *string `json:"organizational_type,omitempty"`
+}
+
 // Business represents a Wave business.
 type Business struct {
-	Id                  string    `json:"id,omitempty"`
-	URL                 string    `json:"url,omitempty"`
-	CompanyName         string    `json:"company_name,omitempty"`
-	PrimaryCurrencyCode string    `json:"primary_currency_code,omitempty"`
-	PhoneNumber         *string   `json:"phone_number,omitempty"`
-	MobilePhoneNumber   *string   `json:"mobile_phone_number,omitempty"`
-	TollFreePhoneNumber *string   `json:"toll_free_phone_number,omitempty"`
-	FaxNumber           *string   `json:"fax_number,omitempty"`
-	Website             *string   `json:"website,omitempty"`
-	IsPersonalBusiness  bool      `json:"is_personal_business,omitempty"`
-	DateCreated         *DateTime `json:"date_created,omitempty"`
-	DateModified        *DateTime `json:"date_modified,omitempty"`
-	BusinessTypeInfo    *struct {
-		BusinessType       *string `json:"business_type,omitempty"`
-		BusinessSubtype    *string `json:"business_subtype,omitempty"`
-		OrganizationalType *string `json:"organizational_type,omitempty"`
-	} `json:"business_type_info,omitempty"`
-	AddressInfo *struct {
-		Address1   *string `json:"address1,omitempty"`
-		Address2   *string `json:"address2,omitempty"`
-		City       *string `json:"city,omitempty"`
-		PostalCode *string `json:"postal_code,omitempty"`
-		Province   *struct {
-			Name *string `json:"name,omitempty"`
-			Slug *string `json:"slug,omitempty"`
-		} `json:"province,omitempty"`
-		Country *struct {
-			Name         string `json:"name,omitempty"`
-			CountryCode  string `json:"country_code,omitempty"`
-			CurrencyCode string `json:"currency_code,omitempty"`
-			URL          string `json:"url,omitempty"`
-		} `json:"country,omitempty"`
-	} `json:"address_info,omitempty"`
+	ID                  string            `json:"id,omitempty"`
+	URL                 string            `json:"url,omitempty"`
+	CompanyName         string            `json:"company_name,omitempty"`
+	PrimaryCurrencyCode string            `json:"primary_currency_code,omitempty"`
+	PhoneNumber         *string           `json:"phone_number,omitempty"`
+	MobilePhoneNumber   *string           `json:"mobile_phone_number,omitempty"`
+	TollFreePhoneNumber *string           `json:"toll_free_phone_number,omitempty"`
+	FaxNumber           *string           `json:"fax_number,omitempty"`
+	Website             *string           `json:"website,omitempty"`
+	IsPersonalBusiness  bool              `json:"is_personal_business,omitempty"`
+	DateCreated         *DateTime         `json:"date_created,omitempty"`
+	DateModified        *DateTime         `json:"date_modified,omitempty"`
+	BusinessTypeInfo    *BusinessTypeInfo `json:"business_type_info,omitempty"`
+	Address             *Address          `json:"address_info,omitempty"`
 }
 
 func (b *Business) String() string {
-	return fmt.Sprintf("%v (id=%v, personal=%v)", b.CompanyName, b.Id, b.IsPersonalBusiness)
+	return fmt.Sprintf("%v (id=%v, personal=%v)", b.CompanyName, b.ID, b.IsPersonalBusiness)
 }
 
 // List all businesses owned by the authenticated user.
@@ -105,8 +93,8 @@ func (service *BusinessesService) Create(business Business) (*Business, *http.Re
 // Replace an existing business. You cannot create a business using this method.
 //
 // Wave API docs: http://waveaccounting.github.io/api/endpoints/businesses.html#put--businesses-(identity_business_id)-
-func (service *BusinessesService) Replace(businessId string, business Business) (*Business, *http.Response, error) {
-	url := fmt.Sprintf("businesses/%s", businessId)
+func (service *BusinessesService) Replace(id string, business Business) (*Business, *http.Response, error) {
+	url := fmt.Sprintf("businesses/%v", id)
 	req, err := service.client.NewRequest("PUT", url, business)
 	if err != nil {
 		return nil, nil, err
@@ -122,8 +110,8 @@ func (service *BusinessesService) Replace(businessId string, business Business) 
 // Update an existing business. You cannot create a business using this method.
 //
 // Wave API docs: http://waveaccounting.github.io/api/endpoints/businesses.html#patch--businesses-(identity_business_id)-
-func (service *BusinessesService) Update(businessId string, business Business) (*Business, *http.Response, error) {
-	url := fmt.Sprintf("businesses/%s", businessId)
+func (service *BusinessesService) Update(id string, business Business) (*Business, *http.Response, error) {
+	url := fmt.Sprintf("businesses/%v", id)
 	req, err := service.client.NewRequest("PATCH", url, business)
 	if err != nil {
 		return nil, nil, err

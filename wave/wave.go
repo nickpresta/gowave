@@ -17,9 +17,15 @@ const (
 	userAgent      = "gowave/" + version
 )
 
+// DateTime represents a time that can be unmarshalled from a JSON string,
+// formatted as ISO-8601 (2006-01-02T15:04:05+00:00)
 type DateTime time.Time
+
+// Date represents a time that can be unmarshalled from a JSON string,
+// formatted as ISO-8601 (2006-01-02)
 type Date time.Time
 
+// Client used to interact with the Wave API.
 type Client struct {
 	// HTTP client used to communicate with the API.
 	client *http.Client
@@ -36,9 +42,11 @@ type Client struct {
 	Businesses *BusinessesService
 	Countries  *CountriesService
 	Currencies *CurrenciesService
+	Customers  *CustomersService
 	Users      *UsersService
 }
 
+// ErrorResponse represents a single error returned from the API.
 type ErrorResponse struct {
 	Response *http.Response
 	Err      struct {
@@ -51,6 +59,8 @@ func (resp *ErrorResponse) Error() string {
 		resp.Response.Request.Method, resp.Response.Request.URL, resp.Response.StatusCode, resp.Err.Message)
 }
 
+// UnmarshalJSON implements the json.Unmarshaler interface.
+// DateTime is expected to be in ISO-8601 format.
 func (t *DateTime) UnmarshalJSON(b []byte) error {
 	v, err := time.Parse("2006-01-02T15:04:05+00:00", string(b[1:len(b)-1]))
 	if err != nil {
@@ -60,14 +70,18 @@ func (t *DateTime) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// MarshalJSON implements the json.Marshaler interface.
+// DateTime will be formatted as ISO-8601.
 func (t DateTime) MarshalJSON() ([]byte, error) {
 	trueTime := time.Time(t)
 	if y := trueTime.Year(); y < 0 || y >= 10000 {
-		return nil, errors.New("Time.MarshalJSON: year outside of range [0,9999]")
+		return nil, errors.New("year outside of range [0,9999]")
 	}
 	return []byte(trueTime.Format(`"2006-01-02T15:04:05+00:00"`)), nil
 }
 
+// UnmarshalJSON implements the json.Unmarshaler interface.
+// Date is expected to be in ISO-8601 format.
 func (d *Date) UnmarshalJSON(b []byte) error {
 	v, err := time.Parse("2006-01-02", string(b[1:len(b)-1]))
 	if err != nil {
@@ -77,14 +91,21 @@ func (d *Date) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// MarshalJSON implements the json.Marshaler interface.
+// Date will be formatted as ISO-8601.
 func (d Date) MarshalJSON() ([]byte, error) {
 	trueTime := time.Time(d)
 	if y := trueTime.Year(); y < 0 || y >= 10000 {
-		return nil, errors.New("Time.MarshalJSON: year outside of range [0,9999]")
+		return nil, errors.New("year outside of range [0,9999]")
 	}
 	return []byte(trueTime.Format(`"2006-01-02"`)), nil
 }
 
+// NewClient returns a new Wave API client.
+// If a nil httpClient is provided, http.DefaultClient will be used.
+// To use API methods which require
+// authentication, provide an http.Client that will perform the authentication
+// for you (such as that provided by the goauth2 library).
 func NewClient(client *http.Client) *Client {
 	if client == nil {
 		client = http.DefaultClient
@@ -97,11 +118,17 @@ func NewClient(client *http.Client) *Client {
 	c.Businesses = &BusinessesService{client: c}
 	c.Countries = &CountriesService{client: c}
 	c.Currencies = &CurrenciesService{client: c}
+	c.Customers = &CustomersService{client: c}
 	c.Users = &UsersService{client: c}
 
 	return c
 }
 
+// NewRequest creates an API request. A relative URL can be provided in urlStr,
+// in which case it is resolved relative to the BaseURL of the Client.
+// Relative URLs should always be specified without a preceding slash.
+// If specified, the value pointed to by body is JSON encoded and included as the
+// request body.
 func (c *Client) NewRequest(method string, urlStr string, body interface{}) (*http.Request, error) {
 	rel, err := url.Parse(urlStr)
 	if err != nil {
@@ -127,6 +154,9 @@ func (c *Client) NewRequest(method string, urlStr string, body interface{}) (*ht
 	return req, nil
 }
 
+// Do sends an API request and returns the API response.
+// The API response is decoded and stored in the value pointed to by v, or returned
+// as an error if an API error has occured.
 func (c *Client) Do(request *http.Request, v interface{}) (*http.Response, error) {
 	resp, err := c.client.Do(request)
 	if err != nil {
@@ -151,6 +181,11 @@ func (c *Client) Do(request *http.Request, v interface{}) (*http.Response, error
 	return resp, err
 }
 
+// CheckResponse checks the API response for errors, and returns them if
+// present. A response is considered an error if it has a status code outside
+// the 200 range. API error responses are expected to have either no response
+// body, or a JSON response body that maps to ErrorResponse. Any other
+// response body will be silently ignored.
 func CheckResponse(resp *http.Response) error {
 	if code := resp.StatusCode; 200 <= code && code <= 299 {
 		return nil
@@ -163,18 +198,21 @@ func CheckResponse(resp *http.Response) error {
 	return errorResponse
 }
 
+// Bool is a helper method that allocates a new bool value and returns a pointer to it.
 func Bool(v bool) *bool {
 	p := new(bool)
 	*p = v
 	return p
 }
 
+// Int is a helper method that allocates a new int value and returns a pointer to it.
 func Int(v int) *int {
 	p := new(int)
 	*p = v
 	return p
 }
 
+// String is a helper method that allocates a new string value and returns a pointer to it.
 func String(v string) *string {
 	p := new(string)
 	*p = v
