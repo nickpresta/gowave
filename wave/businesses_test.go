@@ -5,43 +5,41 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
+	"time"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 const (
 	expectedBusinessJSON = `{
-		"id":"",
-		"url":"",
-		"company_name":"",
-		"primary_currency_code":"",
-		"phone_number":null,
-		"mobile_phone_number":null,
-		"toll_free_phone_number":null,
-		"fax_number":null,
-		"website":null,
-		"is_personal_business":false,
-		"date_created":"0001-01-01T00:00:00+00:00",
-		"date_modified":"0001-01-01T00:00:00+00:00",
-		"business_type_info":{
-			"business_type":null,
-			"business_subtype":null,
-			"organizational_type":null
+		"id":"id",
+		"url":"url",
+		"company_name":"Company Name",
+		"primary_currency_code":"CAD",
+		"business_type":"business type",
+		"business_subtype":"business sub-type",
+		"organizational_type":"organizational type",
+		"address1":"Address 1",
+		"address2":"Address 2",
+		"city":"City",
+		"province":{
+			"name":"Ontario",
+			"slug":"ontario"
 		},
-		"address_info":{
-			"address1":null,
-			"address2":null,
-			"city":null,
-			"postal_code":null,
-			"province":{
-				"name":null,"slug":null
-			},
-			"country":{
-				"name":null,
-				"country_code":null,
-				"currency_code":null,
-				"url":""
-			}
-		}
+		"country":{
+			"name":"Canada",
+			"country_code":"CA",
+			"currency_code":"CAD",
+			"url":"url"
+		},
+		"postal_code":"A1B 2C3",
+		"phone_number":"416-555-5555",
+		"mobile_phone_number":"416-555-5556",
+		"toll_free_phone_number":"416-555-5557",
+		"fax_number":"416-555-5558",
+		"website":"https://example.com",
+		"is_personal_business":false,
+		"date_created":"2009-11-10T23:00:00+00:00",
+		"date_modified":"2009-11-10T23:00:00+00:00"
 	}`
 	expectedBusinessesJSON = "[" + expectedBusinessJSON + "]"
 )
@@ -49,6 +47,42 @@ const (
 func TestBusinessesService(t *testing.T) {
 	expectedBusinessStruct := new(Business)
 	json.Unmarshal([]byte(expectedBusinessJSON), &expectedBusinessStruct)
+
+	Convey("Testing JSON marshalling of a Business", t, func() {
+		datetime := DateTime(time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC))
+		b := &Business{
+			ID:                  String("id"),
+			URL:                 String("url"),
+			CompanyName:         String("Company Name"),
+			PrimaryCurrencyCode: String("CAD"),
+			BusinessType:        String("business type"),
+			BusinessSubtype:     String("business sub-type"),
+			OrganizationalType:  String("organizational type"),
+			Address1:            String("Address 1"),
+			Address2:            String("Address 2"),
+			City:                String("City"),
+			Province: &Province{
+				Name: String("Ontario"),
+				Slug: String("ontario"),
+			},
+			Country: &Country{
+				Name:         String("Canada"),
+				CountryCode:  String("CA"),
+				CurrencyCode: String("CAD"),
+				URL:          String("url"),
+			},
+			PostalCode:          String("A1B 2C3"),
+			PhoneNumber:         String("416-555-5555"),
+			MobilePhoneNumber:   String("416-555-5556"),
+			TollFreePhoneNumber: String("416-555-5557"),
+			FaxNumber:           String("416-555-5558"),
+			Website:             String("https://example.com"),
+			IsPersonalBusiness:  Bool(false),
+			DateCreated:         &datetime,
+			DateModified:        &datetime,
+		}
+		checkMarshalJSON(b, expectedBusinessJSON)
+	})
 
 	Convey("LIST all owned businesses", t, func() {
 		setUp()
@@ -141,9 +175,9 @@ func TestBusinessesService(t *testing.T) {
 
 	Convey("String method on Business", t, func() {
 		b := new(Business)
-		b.CompanyName = "Company Test"
-		b.IsPersonalBusiness = true
-		b.ID = "id"
+		b.CompanyName = String("Company Test")
+		b.IsPersonalBusiness = Bool(true)
+		b.ID = String("id")
 		So(b.String(), ShouldEqual, "Company Test (id=id, personal=true)")
 	})
 }

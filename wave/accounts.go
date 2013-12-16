@@ -14,22 +14,22 @@ type AccountsService struct {
 
 // Account represents a Wave business.
 type Account struct {
-	ID                    uint64    `json:"id,omitempty"`
+	ID                    *int      `json:"id,omitempty"`
 	URL                   *string   `json:"url,omitempty"`
 	Name                  *string   `json:"name,omitempty"`
 	Active                *bool     `json:"active,omitempty"`
-	AccountType           *string   `json:"account_type,omitempty"`
 	AccountClass          *string   `json:"account_class,omitempty"`
+	AccountType           *string   `json:"account_type,omitempty"`
 	StandardAccountNumber *int      `json:"standard_account_number,omitempty"`
 	AccountNumber         *int      `json:"account_number,omitempty"`
 	IsPayment             *bool     `json:"is_payment,omitempty"`
 	CanDelete             *bool     `json:"can_delete,omitempty"`
+	Currency              *Currency `json:"currency,omitempty"`
 	IsCurrencyEditable    *bool     `json:"is_currency_editable,omitempty"`
 	IsNameEditable        *bool     `json:"is_name_editable,omitempty"`
 	IsPaymentEditable     *bool     `json:"is_payment_editable,omitempty"`
 	DateCreated           *DateTime `json:"date_created,omitempty"`
 	DateModified          *DateTime `json:"date_modified,omitempty"`
-	Currency              *Currency `json:"currency,omitempty"`
 }
 
 func (a *Account) String() string {

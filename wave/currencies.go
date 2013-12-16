@@ -14,14 +14,14 @@ type CurrenciesService struct {
 
 // Currency represents a currency in ISO 4217 format (http://en.wikipedia.org/wiki/ISO_4217).
 type Currency struct {
-	URL    string `json:"url,omitempty"`
-	Code   string `json:"code,omitempty"`
-	Symbol string `json:"symbol,omitempty"`
-	Name   string `json:"name,omitempty"`
+	URL    *string `json:"url,omitempty"`
+	Code   *string `json:"code,omitempty"`
+	Symbol *string `json:"symbol,omitempty"`
+	Name   *string `json:"name,omitempty"`
 }
 
 func (c *Currency) String() string {
-	return fmt.Sprintf("%v (%v)", c.Code, c.Name)
+	return fmt.Sprintf("%v (%v)", *c.Code, *c.Name)
 }
 
 // List all currencies available in Wave.

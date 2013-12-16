@@ -10,7 +10,7 @@ import (
 
 const (
 	expectedCurrencyJSON = `{
-		"url":"https://api.example.com/currencies/CAD/",
+		"url":"url",
 		"code":"CAD",
 		"symbol":"$",
 		"name":"Canadian dollar"
@@ -21,6 +21,18 @@ const (
 func TestCurrenciesService(t *testing.T) {
 	expectedCurrencyStruct := new(Currency)
 	json.Unmarshal([]byte(expectedCurrencyJSON), expectedCurrencyStruct)
+
+	Convey("Testing JSON marshalling of a Currency", t, func() {
+		c := []Currency{
+			Currency{
+				URL:    String("url"),
+				Code:   String("CAD"),
+				Symbol: String("$"),
+				Name:   String("Canadian dollar"),
+			},
+		}
+		checkMarshalJSON(c, expectedCurrenciesJSON)
+	})
 
 	Convey("LISTing all currencies", t, func() {
 		setUp()
@@ -58,8 +70,8 @@ func TestCurrenciesService(t *testing.T) {
 
 	Convey("String method on Currency", t, func() {
 		c := new(Currency)
-		c.Name = "Canadian dollar"
-		c.Code = "CAD"
+		c.Name = String("Canadian dollar")
+		c.Code = String("CAD")
 		So(c.String(), ShouldEqual, "CAD (Canadian dollar)")
 	})
 

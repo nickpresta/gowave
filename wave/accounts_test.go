@@ -5,23 +5,24 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
+	"time"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 const (
 	expectedAccountJSON = `{
-		"id":1130,
-		"url":"https://api.wave-local.com/businesses/dd921fea-bef8-4281-a400-abefe265b601/accounts/1130/",
-		"name":"Updated Account Name",
+		"id": 1,
+		"url":"url",
+		"name":"Account Name",
 		"active":true,
 		"account_class":"bank",
 		"account_type":"asset",
-		"standard_account_number":1156,
-		"account_number":1158,
+		"standard_account_number":2,
+		"account_number":3,
 		"is_payment":false,
 		"can_delete":true,
 		"currency":{
-			"url":"https://api.wave-local.com/currencies/CAD/",
+			"url":"url",
 			"code":"CAD",
 			"symbol":"$",
 			"name":"Canadian dollar"
@@ -29,8 +30,8 @@ const (
 		"is_currency_editable":true,
 		"is_name_editable":true,
 		"is_payment_editable":true,
-		"date_created":"2013-06-29T18:03:19+00:00",
-		"date_modified":"2013-06-30T18:03:19+00:00"
+		"date_created":"2009-11-10T23:00:00+00:00",
+		"date_modified":"2009-11-10T23:00:00+00:00"
 	}`
 	expectedAccountsJSON = "[" + expectedAccountJSON + "]"
 )
@@ -38,6 +39,34 @@ const (
 func TestAccountsService(t *testing.T) {
 	expectedAccountStruct := new(Account)
 	json.Unmarshal([]byte(expectedAccountJSON), expectedAccountStruct)
+
+	Convey("Testing JSON marshalling of an Account", t, func() {
+		datetime := DateTime(time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC))
+		a := &Account{
+			ID:                    Int(1),
+			URL:                   String("url"),
+			Name:                  String("Account Name"),
+			Active:                Bool(true),
+			AccountClass:          String("bank"),
+			AccountType:           String("asset"),
+			StandardAccountNumber: Int(2),
+			AccountNumber:         Int(3),
+			IsPayment:             Bool(false),
+			CanDelete:             Bool(true),
+			Currency: &Currency{
+				URL:    String("url"),
+				Code:   String("CAD"),
+				Symbol: String("$"),
+				Name:   String("Canadian dollar"),
+			},
+			IsCurrencyEditable: Bool(true),
+			IsNameEditable:     Bool(true),
+			IsPaymentEditable:  Bool(true),
+			DateCreated:        &datetime,
+			DateModified:       &datetime,
+		}
+		checkMarshalJSON(a, expectedAccountJSON)
+	})
 
 	Convey("LIST all Accounts for a business", t, func() {
 		setUp()

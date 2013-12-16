@@ -9,30 +9,48 @@ import (
 )
 
 const (
-	provincesJSON = `[{"name":"Ontario","slug":"ontario"}]`
-	countryJSON   = `{
+	expectedProvincesJSON = `[{"name":"Ontario","slug":"ontario"}]`
+	expectedCountryJSON   = `{
 		"name":"Canada",
 		"country_code":"CA",
 		"currency_code":"CAD",
-		"url":"https://api.example.com/countries/CA/",
-		"provinces":` + provincesJSON + "}"
-	countriesJSON = "[" + countryJSON + "]"
+		"provinces":` + expectedProvincesJSON + `,
+		"url":"url"
+	}`
+	expectedCountriesJSON = "[" + expectedCountryJSON + "]"
 )
 
 func countryStructHelper() *Country {
 	var c Country
-	json.Unmarshal([]byte(countryJSON), &c)
+	json.Unmarshal([]byte(expectedCountryJSON), &c)
 	return &c
 }
 
 func provincesStruct() []Province {
 	p := new([]Province)
-	json.Unmarshal([]byte(provincesJSON), &p)
+	json.Unmarshal([]byte(expectedProvincesJSON), &p)
 	return *p
 }
 
 func TestCountriesService(t *testing.T) {
 	countryStruct := countryStructHelper()
+
+	Convey("Testing JSON marshalling of a Country", t, func() {
+		p := []Province{
+			Province{
+				Name: String("Ontario"),
+				Slug: String("ontario"),
+			},
+		}
+		c := &Country{
+			Name:         String("Canada"),
+			CountryCode:  String("CA"),
+			CurrencyCode: String("CAD"),
+			URL:          String("url"),
+			Provinces:    p,
+		}
+		checkMarshalJSON(c, expectedCountryJSON)
+	})
 
 	Convey("LISTing all countries", t, func() {
 		setUp()
@@ -40,7 +58,7 @@ func TestCountriesService(t *testing.T) {
 
 		mux.HandleFunc("/countries", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "GET")
-			fmt.Fprint(w, countriesJSON)
+			fmt.Fprint(w, expectedCountriesJSON)
 		})
 
 		countries, _, err := client.Countries.List()
@@ -55,7 +73,7 @@ func TestCountriesService(t *testing.T) {
 
 		mux.HandleFunc("/countries/CA", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "GET")
-			fmt.Fprint(w, countryJSON)
+			fmt.Fprint(w, expectedCountryJSON)
 		})
 
 		country, _, err := client.Countries.Get("CA")
@@ -74,7 +92,7 @@ func TestCountriesService(t *testing.T) {
 
 		mux.HandleFunc("/countries/CA/provinces", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "GET")
-			fmt.Fprint(w, provincesJSON)
+			fmt.Fprint(w, expectedProvincesJSON)
 		})
 
 		provinces, _, err := client.Countries.Provinces("CA")
@@ -90,14 +108,14 @@ func TestCountriesService(t *testing.T) {
 
 	Convey("String method on Country", t, func() {
 		c := new(Country)
-		c.Name = "Canada"
-		c.CountryCode = "CA"
+		c.Name = String("Canada")
+		c.CountryCode = String("CA")
 		So(c.String(), ShouldEqual, "Canada (CA)")
 	})
 
 	Convey("String method on Province", t, func() {
 		p := new(Province)
-		p.Name = "Ontario"
+		p.Name = String("Ontario")
 		So(p.String(), ShouldEqual, "Ontario")
 	})
 }
