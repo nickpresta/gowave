@@ -7,7 +7,7 @@ import (
 
 // CurrenciesService handles communication with the currency related methods of the Wave API.
 //
-// Wave API docs: http://waveaccounting.github.io/api/endpoints/currencies.html
+// Wave API docs: http://docs.waveapps.com/endpoints/currencies.html
 type CurrenciesService struct {
 	client *Client
 }
@@ -26,7 +26,7 @@ func (c *Currency) String() string {
 
 // List all currencies available in Wave.
 //
-// Wave API docs: http://waveaccounting.github.io/api/endpoints/currencies.html#get--currencies-
+// Wave API docs: http://docs.waveapps.com/endpoints/currencies.html#get--currencies-
 func (service *CurrenciesService) List() ([]Currency, *http.Response, error) {
 	req, err := service.client.NewRequest("GET", "currencies", nil)
 	if err != nil {
@@ -42,7 +42,7 @@ func (service *CurrenciesService) List() ([]Currency, *http.Response, error) {
 
 // Get a specific currency.
 //
-// Wave API docs: http://waveaccounting.github.io/api/endpoints/currencies.html#get--currencies-(code)-
+// Wave API docs: http://docs.waveapps.com/endpoints/currencies.html#get--currencies-(code)-
 func (service *CurrenciesService) Get(code string) (*Currency, *http.Response, error) {
 	u := fmt.Sprintf("currencies/%v", code)
 	req, err := service.client.NewRequest("GET", u, nil)

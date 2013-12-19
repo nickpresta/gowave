@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -43,7 +44,20 @@ type Client struct {
 	Countries  *CountriesService
 	Currencies *CurrenciesService
 	Customers  *CustomersService
+	Products   *ProductsService
 	Users      *UsersService
+}
+
+// EmbedArgs represents which pieces of data should be embedded in a response.
+type EmbedArgs map[string]bool
+
+// BuildQueryString creates a query string based on the EmbedArgs data.
+func (e *EmbedArgs) BuildQueryString() string {
+	values := url.Values{}
+	for embedName, embedValue := range *e {
+		values.Set(embedName, strconv.FormatBool(embedValue))
+	}
+	return values.Encode()
 }
 
 // ErrorResponse represents a single error returned from the API.
@@ -119,6 +133,7 @@ func NewClient(client *http.Client) *Client {
 	c.Countries = &CountriesService{client: c}
 	c.Currencies = &CurrenciesService{client: c}
 	c.Customers = &CustomersService{client: c}
+	c.Products = &ProductsService{client: c}
 	c.Users = &UsersService{client: c}
 
 	return c

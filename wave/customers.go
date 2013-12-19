@@ -7,7 +7,7 @@ import (
 
 // CustomersService handles communication with the customer related methods of the Wave API.
 //
-// Wave API docs: http://waveaccounting.github.io/api/endpoints/customers.html
+// Wave API docs: http://docs.waveapps.com/endpoints/customers.html
 type CustomersService struct {
 	client *Client
 }
@@ -20,7 +20,7 @@ type ShippingDetails struct {
 	Address              *Address `json:"address,omitempty"`
 }
 
-// Customer represents a Wave business.
+// Customer represents an entity associated with an invoice or transaction.
 type Customer struct {
 	ID              uint64           `json:"id,omitempty"`
 	URL             *string          `json:"url,omitempty"`
@@ -105,7 +105,7 @@ func (service *CustomersService) Get(businessID string, customerID uint64) (*Cus
 
 // Create a new customer for a given business.
 //
-// Wave API docs: http://waveaccounting.github.io/api/endpoints/businesses.html#post--businesses-
+// Wave API docs: http://docs.waveapps.com/endpoints/customers.html#post--businesses-{business_id}-customers-
 func (service *CustomersService) Create(businessID string, customer Customer) (*Customer, *http.Response, error) {
 	url := fmt.Sprintf("businesses/%v/customers", businessID)
 	req, err := service.client.NewRequest("POST", url, customer)

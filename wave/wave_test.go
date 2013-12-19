@@ -343,6 +343,20 @@ func TestCheckResponse(t *testing.T) {
 	})
 }
 
+func TestEmbedArgs(t *testing.T) {
+	Convey("EmbedArgs should convert to a querystring", t, func() {
+		e := EmbedArgs{"foo": true, "bar": false}
+		queryParams := e.BuildQueryString()
+		So(queryParams, ShouldEqual, "bar=false&foo=true")
+
+		Convey("Should return an empty string with args", func() {
+			e := EmbedArgs{}
+			queryParams := e.BuildQueryString()
+			So(queryParams, ShouldBeBlank)
+		})
+	})
+}
+
 func TestTypeHelpers(t *testing.T) {
 	Convey("String should return a pointer to a string", t, func() {
 		v := reflect.ValueOf(String("example"))

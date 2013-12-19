@@ -7,7 +7,7 @@ import (
 
 // BusinessesService handles communication with the business related methods of the Wave API.
 //
-// Wave API docs: http://waveaccounting.github.io/api/endpoints/businesses.html
+// Wave API docs: http://docs.waveapps.com/endpoints/businesses.html
 type BusinessesService struct {
 	client *Client
 }
@@ -47,7 +47,7 @@ func (b *Business) String() string {
 
 // List all businesses owned by the authenticated user.
 //
-// Wave API docs: http://waveaccounting.github.io/api/endpoints/businesses.html#get--businesses-
+// Wave API docs: http://docs.waveapps.com/endpoints/businesses.html#get--businesses-
 func (service *BusinessesService) List() ([]Business, *http.Response, error) {
 	req, err := service.client.NewRequest("GET", "businesses", nil)
 	if err != nil {
@@ -63,7 +63,7 @@ func (service *BusinessesService) List() ([]Business, *http.Response, error) {
 
 // Get an existing business.
 //
-// Wave API docs: http://waveaccounting.github.io/api/endpoints/businesses.html#get--businesses-(identity_business_id)-
+// Wave API docs: http://docs.waveapps.com/endpoints/businesses.html#get--businesses-(identity_business_id)-
 func (service *BusinessesService) Get(id string) (*Business, *http.Response, error) {
 	u := fmt.Sprintf("businesses/%s", id)
 	req, err := service.client.NewRequest("GET", u, nil)
@@ -80,7 +80,7 @@ func (service *BusinessesService) Get(id string) (*Business, *http.Response, err
 
 // Create a new business
 //
-// Wave API docs: http://waveaccounting.github.io/api/endpoints/businesses.html#post--businesses-
+// Wave API docs: http://docs.waveapps.com/endpoints/businesses.html#post--businesses-
 func (service *BusinessesService) Create(business Business) (*Business, *http.Response, error) {
 	req, err := service.client.NewRequest("POST", "businesses", business)
 	if err != nil {
@@ -96,7 +96,7 @@ func (service *BusinessesService) Create(business Business) (*Business, *http.Re
 
 // Replace an existing business. You cannot create a business using this method.
 //
-// Wave API docs: http://waveaccounting.github.io/api/endpoints/businesses.html#put--businesses-(identity_business_id)-
+// Wave API docs: http://docs.waveapps.com/endpoints/businesses.html#put--businesses-(identity_business_id)-
 func (service *BusinessesService) Replace(id string, business Business) (*Business, *http.Response, error) {
 	url := fmt.Sprintf("businesses/%v", id)
 	req, err := service.client.NewRequest("PUT", url, business)
@@ -113,7 +113,7 @@ func (service *BusinessesService) Replace(id string, business Business) (*Busine
 
 // Update an existing business. You cannot create a business using this method.
 //
-// Wave API docs: http://waveaccounting.github.io/api/endpoints/businesses.html#patch--businesses-(identity_business_id)-
+// Wave API docs: http://docs.waveapps.com/endpoints/businesses.html#patch--businesses-(identity_business_id)-
 func (service *BusinessesService) Update(id string, business Business) (*Business, *http.Response, error) {
 	url := fmt.Sprintf("businesses/%v", id)
 	req, err := service.client.NewRequest("PATCH", url, business)

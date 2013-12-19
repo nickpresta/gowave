@@ -7,7 +7,7 @@ import (
 
 // UsersService handles communication with the user related methods of the Wave API.
 //
-// Wave API docs: http://waveaccounting.github.io/api/endpoints/users.html
+// Wave API docs: http://docs.waveapps.com/endpoints/users.html
 type UsersService struct {
 	client *Client
 }
@@ -59,7 +59,7 @@ func (u *User) String() string {
 
 // Get a specific user. Accepts "current" to refer to the current user.
 //
-// Wave API docs: http://waveaccounting.github.io/api/endpoints/users.html#get--users-(identity_user_id)-
+// Wave API docs: http://docs.waveapps.com/endpoints/users.html#get--users-(identity_user_id)-
 func (service *UsersService) Get() (*User, *http.Response, error) {
 	req, err := service.client.NewRequest("GET", "user", nil)
 	if err != nil {
@@ -75,7 +75,7 @@ func (service *UsersService) Get() (*User, *http.Response, error) {
 
 // Replace an existing user. You cannot create a user using this method.
 //
-// Wave API docs: http://waveaccounting.github.io/api/endpoints/users.html#put--users-(identity_user_id)-
+// Wave API docs: http://docs.waveapps.com/endpoints/users.html#put--users-(identity_user_id)-
 func (service *UsersService) Replace(user User) (*User, *http.Response, error) {
 	req, err := service.client.NewRequest("PUT", "user", user)
 	if err != nil {
@@ -91,7 +91,7 @@ func (service *UsersService) Replace(user User) (*User, *http.Response, error) {
 
 // Update an existing user. You cannot create a user using this method.
 //
-// Wave API docs: http://waveaccounting.github.io/api/endpoints/users.html#patch--users-(identity_user_id)-
+// Wave API docs: http://docs.waveapps.com/endpoints/users.html#patch--users-(identity_user_id)-
 func (service *UsersService) Update(user User) (*User, *http.Response, error) {
 	req, err := service.client.NewRequest("PATCH", "user", user)
 	if err != nil {

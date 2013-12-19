@@ -7,7 +7,7 @@ import (
 
 // AccountsService handles communication with the acccounts related methods of the Wave API.
 //
-// Wave API docs: http://waveaccounting.github.io/api/endpoints/accounts.html
+// Wave API docs: http://docs.waveapps.com/endpoints/accounts.html
 type AccountsService struct {
 	client *Client
 }
@@ -72,7 +72,7 @@ func (service *AccountsService) Get(businessID string, accountID uint64) (*Accou
 
 // Create a new account according to a standard account template.
 //
-// Wave API docs: http://waveaccounting.github.io/api/endpoints/businesses.html#post--businesses-
+// Wave API docs: http://docs.waveapps.com/endpoints/businesses.html#post--businesses-
 func (service *AccountsService) Create(businessID string, account Account) (*Account, *http.Response, error) {
 	url := fmt.Sprintf("businesses/%v/accounts", businessID)
 	req, err := service.client.NewRequest("POST", url, account)
