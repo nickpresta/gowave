@@ -3,5 +3,4 @@
 * Create "integration" tests that hit the actual API [PARTIALLY DONE]
 * Pagination
 * Invoice endpoints
-* Product endpoints
 * Sales tax endpoints

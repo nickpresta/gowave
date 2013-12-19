@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"os"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -242,7 +243,7 @@ func TestNewClientDefaults(t *testing.T) {
 		})
 
 		Convey("The UserAgent should have a default", func() {
-			So(c.UserAgent, ShouldEqual, userAgent)
+			So(c.UserAgent, ShouldEqual, strings.Replace(userAgent, "$VERSION$", runtime.Version(), 1))
 		})
 	})
 }
@@ -264,7 +265,7 @@ func TestNewRequest(t *testing.T) {
 		})
 
 		Convey("Request User-Agent should be correct", func() {
-			So(req.Header.Get("User-Agent"), ShouldEqual, userAgent)
+			So(req.Header.Get("User-Agent"), ShouldEqual, strings.Replace(userAgent, "$VERSION$", runtime.Version(), 1))
 		})
 
 		Convey("Request Body should be JSON serialized", func() {

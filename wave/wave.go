@@ -8,14 +8,16 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"runtime"
 	"strconv"
+	"strings"
 	"time"
 )
 
 const (
 	version        = "0.0.1"
 	defaultBaseURL = "https://api.waveapps.com/"
-	userAgent      = "gowave/" + version
+	userAgent      = "gowave/" + version + " (Go $VERSION$; " + runtime.GOOS + "/" + runtime.GOARCH + ")"
 )
 
 // DateTime represents a time that can be unmarshalled from a JSON string,
@@ -127,7 +129,7 @@ func NewClient(client *http.Client) *Client {
 
 	baseURL, _ := url.Parse(defaultBaseURL)
 
-	c := &Client{client: client, BaseURL: baseURL, UserAgent: userAgent}
+	c := &Client{client: client, BaseURL: baseURL, UserAgent: strings.Replace(userAgent, "$VERSION$", runtime.Version(), 1)}
 	c.Accounts = &AccountsService{client: c}
 	c.Businesses = &BusinessesService{client: c}
 	c.Countries = &CountriesService{client: c}
