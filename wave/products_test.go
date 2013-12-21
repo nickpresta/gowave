@@ -76,7 +76,7 @@ func TestProductsService(t *testing.T) {
 			fmt.Fprint(w, expectedProductsJSON)
 		})
 
-		products, _, err := client.Products.List("1", EmbedArgs{"foo": true})
+		products, _, err := client.Products.List("1", &EmbedArgs{"foo": true})
 		c := []Product{*expectedProductStruct}
 		So(err, ShouldEqual, nil)
 		So(products, ShouldResemble, c)

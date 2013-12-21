@@ -34,7 +34,7 @@ func (p *Product) String() string {
 // List all products for a given business.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/products.html#get--businesses-{business_id}-products-
-func (service *ProductsService) List(businessID string, embed EmbedArgs) ([]Product, *http.Response, error) {
+func (service *ProductsService) List(businessID string, embed *EmbedArgs) ([]Product, *http.Response, error) {
 	url := fmt.Sprintf("businesses/%v/products", businessID)
 	if embed != nil {
 		queryParams := embed.BuildQueryString()
