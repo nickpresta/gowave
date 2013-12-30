@@ -1,9 +1,12 @@
+// Copyright (c) 2013, Nick Presta
+// All rights reserved.
+//
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package wave
 
-import (
-	"fmt"
-	"net/http"
-)
+import "fmt"
 
 // UsersService handles communication with the user related methods of the Wave API.
 //
@@ -60,13 +63,13 @@ func (u *User) String() string {
 // Get a specific user. Accepts "current" to refer to the current user.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/users.html#get--users-(identity_user_id)-
-func (service *UsersService) Get() (*User, *http.Response, error) {
+func (service *UsersService) Get() (*User, *Response, error) {
 	req, err := service.client.NewRequest("GET", "user", nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	user := new(User)
-	resp, err := service.client.Do(req, user)
+	resp, err := service.client.Do(req, user, false)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -76,13 +79,13 @@ func (service *UsersService) Get() (*User, *http.Response, error) {
 // Replace an existing user. You cannot create a user using this method.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/users.html#put--users-(identity_user_id)-
-func (service *UsersService) Replace(user User) (*User, *http.Response, error) {
+func (service *UsersService) Replace(user User) (*User, *Response, error) {
 	req, err := service.client.NewRequest("PUT", "user", user)
 	if err != nil {
 		return nil, nil, err
 	}
 	u := new(User)
-	resp, err := service.client.Do(req, u)
+	resp, err := service.client.Do(req, u, false)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -92,13 +95,13 @@ func (service *UsersService) Replace(user User) (*User, *http.Response, error) {
 // Update an existing user. You cannot create a user using this method.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/users.html#patch--users-(identity_user_id)-
-func (service *UsersService) Update(user User) (*User, *http.Response, error) {
+func (service *UsersService) Update(user User) (*User, *Response, error) {
 	req, err := service.client.NewRequest("PATCH", "user", user)
 	if err != nil {
 		return nil, nil, err
 	}
 	u := new(User)
-	resp, err := service.client.Do(req, u)
+	resp, err := service.client.Do(req, u, false)
 	if err != nil {
 		return nil, resp, err
 	}

@@ -1,3 +1,9 @@
+// Copyright (c) 2013, Nick Presta
+// All rights reserved.
+//
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package wave
 
 import (
@@ -44,7 +50,10 @@ const (
 		"date_created":"2009-11-10T23:00:00+00:00",
 		"date_modified":"2009-11-10T23:00:00+00:00"
 	}`
-	expectedProductsJSON = "[" + expectedProductJSON + "]"
+	expectedProductsJSON = `{
+"next": null,
+"previous": null,
+"results": [` + expectedProductJSON + "]}"
 )
 
 func TestProductsService(t *testing.T) {
@@ -71,12 +80,12 @@ func TestProductsService(t *testing.T) {
 		defer tearDown()
 
 		mux.HandleFunc("/businesses/1/products", func(w http.ResponseWriter, r *http.Request) {
-			So(r.URL.RawQuery, ShouldEqual, "foo=true")
+			So(r.URL.RawQuery, ShouldEqual, "embed_accounts=true")
 			So(r.Method, ShouldEqual, "GET")
 			fmt.Fprint(w, expectedProductsJSON)
 		})
 
-		products, _, err := client.Products.List("1", &EmbedArgs{"foo": true})
+		products, _, err := client.Products.List("1", &ProductListOptions{EmbedAccounts: true})
 		c := []Product{*expectedProductStruct}
 		So(err, ShouldEqual, nil)
 		So(products, ShouldResemble, c)
@@ -106,12 +115,12 @@ func TestProductsService(t *testing.T) {
 		defer tearDown()
 
 		mux.HandleFunc("/businesses/1/products/1", func(w http.ResponseWriter, r *http.Request) {
-			So(r.URL.RawQuery, ShouldEqual, "foo=true")
+			So(r.URL.RawQuery, ShouldEqual, "embed_accounts=true")
 			So(r.Method, ShouldEqual, "GET")
 			fmt.Fprint(w, expectedProductJSON)
 		})
 
-		product, _, err := client.Products.Get("1", 1, EmbedArgs{"foo": true})
+		product, _, err := client.Products.Get("1", 1, &ProductGetOptions{EmbedAccounts: true})
 		So(err, ShouldBeNil)
 		So(product, ShouldResemble, expectedProductStruct)
 	})

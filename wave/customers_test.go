@@ -1,3 +1,9 @@
+// Copyright (c) 2013, Nick Presta
+// All rights reserved.
+//
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package wave
 
 import (
@@ -68,7 +74,10 @@ const (
     "date_created": "2013-12-05T10:31:01+00:00",
     "date_modified": "2013-12-05T13:37:59+00:00"
 }`
-	expectedCustomersJSON = "[" + expectedCustomerJSON + "]"
+	expectedCustomersJSON = `{
+"next": null,
+"previous": null,
+"results": [` + expectedCustomerJSON + "]}"
 )
 
 func TestCustomersService(t *testing.T) {
@@ -84,14 +93,14 @@ func TestCustomersService(t *testing.T) {
 			fmt.Fprint(w, expectedCustomersJSON)
 		})
 
-		customers, _, err := client.Customers.List("1")
+		customers, _, err := client.Customers.List("1", nil)
 		c := []Customer{*expectedCustomerStruct}
 		So(err, ShouldEqual, nil)
 		So(customers, ShouldResemble, c)
 	})
 
 	Convey("LIST all Customers for a business invalid ID", t, func() {
-		_, resp, err := client.Customers.List("%")
+		_, resp, err := client.Customers.List("%", nil)
 		checkInvalidURLError(nil, resp, err)
 	})
 

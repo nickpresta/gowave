@@ -2,7 +2,7 @@
 
 [![Build Status](https://drone.io/github.com/NickPresta/gowave/status.png)](https://drone.io/github.com/NickPresta/gowave/latest)
 [coverage](https://drone.io/github.com/NickPresta/gowave/files/coverage.html)
-[documentation]()
+[documentation](https://godoc.org/github.com/nickpresta/gowave/wave)
 
 gowave is a Go client library for accessing the [Wave API](https://developer.waveapps.com).
 

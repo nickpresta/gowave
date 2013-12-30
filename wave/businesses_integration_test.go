@@ -1,3 +1,9 @@
+// Copyright (c) 2013, Nick Presta
+// All rights reserved.
+//
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 // +build integration
 
 package wave
@@ -15,7 +21,7 @@ func TestBusinessessServiceIntegration(t *testing.T) {
 	Convey("Full end-to-end Business integration", t, func() {
 		businesses, _, err := integrationClient.Businesses.List()
 		So(err, ShouldBeNil)
-		bID := businesses[0].Id
+		bID := businesses[0].ID
 
 		for i := 0; i < len(businesses); i++ {
 			log.Printf("Business: %+v\n", businesses[i])

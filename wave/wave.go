@@ -1,3 +1,9 @@
+// Copyright (c) 2013, Nick Presta
+// All rights reserved.
+//
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package wave
 
 import (
@@ -8,17 +14,20 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"reflect"
 	"runtime"
 	"strconv"
-	"strings"
 	"time"
+
+	"github.com/google/go-querystring/query"
 )
 
 const (
 	version        = "0.0.1"
 	defaultBaseURL = "https://api.waveapps.com/"
-	userAgent      = "gowave/" + version + " (Go $VERSION$; " + runtime.GOOS + "/" + runtime.GOARCH + ")"
 )
+
+var userAgent = fmt.Sprintf("gowave/%v (Go %v; %v/%v)", version, runtime.Version(), runtime.GOOS, runtime.GOARCH)
 
 // DateTime represents a time that can be unmarshalled from a JSON string,
 // formatted as ISO-8601 (2006-01-02T15:04:05+00:00)
@@ -50,16 +59,47 @@ type Client struct {
 	Users      *UsersService
 }
 
-// EmbedArgs represents which pieces of data should be embedded in a response.
-type EmbedArgs map[string]bool
+// PageOptions specifies the pagination options for methods that support pagination (mostly LIST and GET options)
+type PageOptions struct {
+	Page     int `url:"page,omitempty"`
+	PageSize int `url:"page_size,omitempty"`
+}
 
-// BuildQueryString creates a query string based on the EmbedArgs data.
-func (e *EmbedArgs) BuildQueryString() string {
-	values := url.Values{}
-	for embedName, embedValue := range *e {
-		values.Set(embedName, strconv.FormatBool(embedValue))
+// addOptions adds the parameters in opt as URL query parameters to s. opt
+// must be a struct whose fields may contain "url" tags.
+func addOptions(s string, opt interface{}) (string, error) {
+	v := reflect.ValueOf(opt)
+	if v.Kind() == reflect.Ptr && v.IsNil() {
+		return s, nil
 	}
-	return values.Encode()
+
+	u, err := url.Parse(s)
+	if err != nil {
+		return s, err
+	}
+
+	qs, err := query.Values(opt)
+	if err != nil {
+		return s, err
+	}
+
+	u.RawQuery = qs.Encode()
+	return u.String(), nil
+}
+
+type paginatedResponse struct {
+	Next       *string `json:"next,omitempty"`
+	Previous   *string `json:"previous,omitempty"`
+	TotalCount int     `json:"total_count,omitempty"`
+}
+
+// Response is a Wave API response. This embeds the standard http.Response and provides pagination information.
+type Response struct {
+	CurrentPage  int
+	NextPage     int
+	PreviousPage int
+	TotalCount   int
+	*http.Response
 }
 
 // ErrorResponse represents a single error returned from the API.
@@ -129,7 +169,7 @@ func NewClient(client *http.Client) *Client {
 
 	baseURL, _ := url.Parse(defaultBaseURL)
 
-	c := &Client{client: client, BaseURL: baseURL, UserAgent: strings.Replace(userAgent, "$VERSION$", runtime.Version(), 1)}
+	c := &Client{client: client, BaseURL: baseURL, UserAgent: userAgent}
 	c.Accounts = &AccountsService{client: c}
 	c.Businesses = &BusinessesService{client: c}
 	c.Countries = &CountriesService{client: c}
@@ -174,15 +214,17 @@ func (c *Client) NewRequest(method string, urlStr string, body interface{}) (*ht
 // Do sends an API request and returns the API response.
 // The API response is decoded and stored in the value pointed to by v, or returned
 // as an error if an API error has occured.
-func (c *Client) Do(request *http.Request, v interface{}) (*http.Response, error) {
+func (c *Client) Do(request *http.Request, v interface{}, isPaginated bool) (*Response, error) {
 	resp, err := c.client.Do(request)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	if err = CheckResponse(resp); err != nil {
-		return resp, err
+	response := &Response{Response: resp}
+
+	if err = CheckResponse(response.Response); err != nil {
+		return response, err
 	}
 
 	var buf bytes.Buffer
@@ -190,12 +232,49 @@ func (c *Client) Do(request *http.Request, v interface{}) (*http.Response, error
 	bufBytes := buf.Bytes()
 	reader := bytes.NewReader(bufBytes)
 	// Put back the body into response.Body so it can be ready again by the consumer
-	resp.Body = ioutil.NopCloser(reader)
+	response.Response.Body = ioutil.NopCloser(reader)
 
 	if v != nil {
 		err = json.Unmarshal(bufBytes, &v)
 	}
-	return resp, err
+
+	if err == nil && isPaginated {
+		// parse out the pagination information
+		p := new(paginatedResponse)
+		json.Unmarshal(bufBytes, &p)
+		err = response.populatePageValues(p)
+	}
+	return response, err
+}
+
+func (r *Response) populatePageValues(opts *paginatedResponse) error {
+	r.TotalCount = opts.TotalCount
+
+	if opts.Next != nil {
+		u, err := url.Parse(*opts.Next)
+		if err != nil {
+			return err
+		}
+		r.NextPage, _ = strconv.Atoi(u.Query().Get("page"))
+	}
+
+	if opts.Previous != nil {
+		u, err := url.Parse(*opts.Previous)
+		if err != nil {
+			return err
+		}
+		r.PreviousPage, _ = strconv.Atoi(u.Query().Get("page"))
+	}
+
+	if opts.Next == nil && opts.Previous == nil {
+		r.CurrentPage = 1
+	} else if opts.Previous != nil {
+		r.CurrentPage = r.PreviousPage + 1
+	} else if opts.Next != nil {
+		r.CurrentPage = r.NextPage - 1
+	}
+
+	return nil
 }
 
 // CheckResponse checks the API response for errors, and returns them if

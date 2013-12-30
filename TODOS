@@ -1,6 +1,3 @@
 * Add a doc.go with examples, etc
-* Create a "proper" CLI for testing and playing around
-* Create "integration" tests that hit the actual API [PARTIALLY DONE]
-* Pagination
 * Invoice endpoints
 * Sales tax endpoints

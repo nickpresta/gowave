@@ -1,9 +1,12 @@
+// Copyright (c) 2013, Nick Presta
+// All rights reserved.
+//
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package wave
 
-import (
-	"fmt"
-	"net/http"
-)
+import "fmt"
 
 // CountriesService handles communication with the country related methods of the Wave API.
 //
@@ -38,13 +41,13 @@ func (c *Country) String() string {
 // List all countries available in Wave.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/geography.html#get--countries-
-func (service *CountriesService) List() ([]Country, *http.Response, error) {
+func (service *CountriesService) List() ([]Country, *Response, error) {
 	req, err := service.client.NewRequest("GET", "countries", nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	countries := new([]Country)
-	resp, err := service.client.Do(req, countries)
+	resp, err := service.client.Do(req, countries, false)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -54,14 +57,14 @@ func (service *CountriesService) List() ([]Country, *http.Response, error) {
 // Get a specific currency.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/geography.html#get--countries-(country_code)-
-func (service *CountriesService) Get(code string) (*Country, *http.Response, error) {
+func (service *CountriesService) Get(code string) (*Country, *Response, error) {
 	u := fmt.Sprintf("countries/%v", code)
 	req, err := service.client.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	country := new(Country)
-	resp, err := service.client.Do(req, country)
+	resp, err := service.client.Do(req, country, false)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -71,14 +74,14 @@ func (service *CountriesService) Get(code string) (*Country, *http.Response, err
 // Provinces gets a specific province for a given country.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/geography.html#get--countries-(country_code)-provinces-
-func (service *CountriesService) Provinces(code string) ([]Province, *http.Response, error) {
+func (service *CountriesService) Provinces(code string) ([]Province, *Response, error) {
 	u := fmt.Sprintf("countries/%v/provinces", code)
 	req, err := service.client.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	provinces := new([]Province)
-	resp, err := service.client.Do(req, provinces)
+	resp, err := service.client.Do(req, provinces, false)
 	if err != nil {
 		return nil, resp, err
 	}

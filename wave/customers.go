@@ -1,9 +1,12 @@
+// Copyright (c) 2013, Nick Presta
+// All rights reserved.
+//
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package wave
 
-import (
-	"fmt"
-	"net/http"
-)
+import "fmt"
 
 // CustomersService handles communication with the customer related methods of the Wave API.
 //
@@ -40,6 +43,11 @@ type Customer struct {
 	DateModified    *DateTime        `json:"date_modified,omitempty"`
 }
 
+type customerList struct {
+	Results []Customer `json:"results"`
+	*paginatedResponse
+}
+
 // FullName returns the full name of a customer.
 //
 // Given a first and last name, FullName will return 'First Last'.
@@ -69,34 +77,43 @@ func (c *Customer) String() string {
 	return *c.Email
 }
 
+// CustomerListOptions specifies the optional parameters to LIST endpoint.
+type CustomerListOptions struct {
+	PageOptions
+}
+
 // List all customers for a given business.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/customers.html#get--businesses-{business_id}-customers-
-func (service *CustomersService) List(businessID string) ([]Customer, *http.Response, error) {
+func (service *CustomersService) List(businessID string, opts *CustomerListOptions) ([]Customer, *Response, error) {
 	url := fmt.Sprintf("businesses/%v/customers", businessID)
+	url, err := addOptions(url, opts)
+	if err != nil {
+		return nil, nil, err
+	}
 	req, err := service.client.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
-	customers := new([]Customer)
-	resp, err := service.client.Do(req, customers)
+	listResponse := new(customerList)
+	resp, err := service.client.Do(req, listResponse, true)
 	if err != nil {
 		return nil, resp, err
 	}
-	return *customers, resp, nil
+	return listResponse.Results, resp, nil
 }
 
 // Get an existing customer for a given business.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/customers.html#get--businesses-{business_id}-customers-{customer_id}-
-func (service *CustomersService) Get(businessID string, customerID uint64) (*Customer, *http.Response, error) {
+func (service *CustomersService) Get(businessID string, customerID uint64) (*Customer, *Response, error) {
 	url := fmt.Sprintf("businesses/%v/customers/%v", businessID, customerID)
 	req, err := service.client.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	customer := new(Customer)
-	resp, err := service.client.Do(req, customer)
+	resp, err := service.client.Do(req, customer, false)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -106,14 +123,14 @@ func (service *CustomersService) Get(businessID string, customerID uint64) (*Cus
 // Create a new customer for a given business.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/customers.html#post--businesses-{business_id}-customers-
-func (service *CustomersService) Create(businessID string, customer Customer) (*Customer, *http.Response, error) {
+func (service *CustomersService) Create(businessID string, customer Customer) (*Customer, *Response, error) {
 	url := fmt.Sprintf("businesses/%v/customers", businessID)
 	req, err := service.client.NewRequest("POST", url, customer)
 	if err != nil {
 		return nil, nil, err
 	}
 	c := new(Customer)
-	resp, err := service.client.Do(req, c)
+	resp, err := service.client.Do(req, c, false)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -123,14 +140,14 @@ func (service *CustomersService) Create(businessID string, customer Customer) (*
 // Replace an existing customer. You cannot create a customer using this method.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/customers.html#put--businesses-{business_id}-customers-{customer_id}-
-func (service *CustomersService) Replace(businessID string, customerID uint64, customer Customer) (*Customer, *http.Response, error) {
+func (service *CustomersService) Replace(businessID string, customerID uint64, customer Customer) (*Customer, *Response, error) {
 	url := fmt.Sprintf("businesses/%v/customers/%v", businessID, customerID)
 	req, err := service.client.NewRequest("PUT", url, customer)
 	if err != nil {
 		return nil, nil, err
 	}
 	c := new(Customer)
-	resp, err := service.client.Do(req, c)
+	resp, err := service.client.Do(req, c, false)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -140,14 +157,14 @@ func (service *CustomersService) Replace(businessID string, customerID uint64, c
 // Update an existing customer. You cannot create a customer using this method.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/customers.html#patch--businesses-{business_id}-customers-{customer_id}-
-func (service *CustomersService) Update(businessID string, customerID uint64, customer Customer) (*Customer, *http.Response, error) {
+func (service *CustomersService) Update(businessID string, customerID uint64, customer Customer) (*Customer, *Response, error) {
 	url := fmt.Sprintf("businesses/%v/customers/%v", businessID, customerID)
 	req, err := service.client.NewRequest("PATCH", url, customer)
 	if err != nil {
 		return nil, nil, err
 	}
 	c := new(Customer)
-	resp, err := service.client.Do(req, c)
+	resp, err := service.client.Do(req, c, false)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -157,11 +174,11 @@ func (service *CustomersService) Update(businessID string, customerID uint64, cu
 // Delete an existing Customer.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/accounts.html#delete--businesses-{business_id}-accounts-{account_id}-
-func (service *CustomersService) Delete(businessID string, customerID uint64) (*http.Response, error) {
+func (service *CustomersService) Delete(businessID string, customerID uint64) (*Response, error) {
 	url := fmt.Sprintf("businesses/%v/customers/%v", businessID, customerID)
 	req, err := service.client.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return nil, err
 	}
-	return service.client.Do(req, nil)
+	return service.client.Do(req, nil, false)
 }

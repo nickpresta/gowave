@@ -1,3 +1,9 @@
+// Copyright (c) 2013, Nick Presta
+// All rights reserved.
+//
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package wave
 
 import (
@@ -109,7 +115,7 @@ func tearDown() {
 	server.Close()
 }
 
-func checkInvalidURLError(v interface{}, resp *http.Response, err error) {
+func checkInvalidURLError(v interface{}, resp *Response, err error) {
 	So(v, ShouldBeNil)
 	So(resp, ShouldBeNil)
 	So(err, ShouldNotBeNil)
@@ -300,7 +306,7 @@ func TestDo(t *testing.T) {
 		})
 		req, _ := client.NewRequest("GET", "/", nil)
 		body := new(data)
-		_, err := client.Do(req, body)
+		_, err := client.Do(req, body, false)
 		So(err, ShouldBeNil)
 		So(body, ShouldResemble, &data{I: 1})
 	})
@@ -311,12 +317,12 @@ func TestDo(t *testing.T) {
 			http.Error(w, "Not Found", http.StatusNotFound)
 		})
 		req, _ := client.NewRequest("GET", "/", nil)
-		resp, err := client.Do(req, nil)
+		resp, err := client.Do(req, nil, false)
 		So(err, ShouldNotBeNil)
 		So(resp.StatusCode, ShouldEqual, http.StatusNotFound)
 	})
 	Convey("Passing in a bad request", t, func() {
-		_, err := client.Do(&http.Request{}, nil)
+		_, err := client.Do(&http.Request{}, nil, false)
 		So(err, ShouldNotBeNil)
 	})
 }
@@ -344,16 +350,88 @@ func TestCheckResponse(t *testing.T) {
 	})
 }
 
-func TestEmbedArgs(t *testing.T) {
-	Convey("EmbedArgs should convert to a querystring", t, func() {
-		e := EmbedArgs{"foo": true, "bar": false}
-		queryParams := e.BuildQueryString()
-		So(queryParams, ShouldEqual, "bar=false&foo=true")
+func TestPageOptions(t *testing.T) {
+	Convey("PageOptions should convert to a querystring", t, func() {
+		opts := &PageOptions{Page: 5, PageSize: 3}
+		u := "https://example.com/"
+		fullURL, err := addOptions(u, opts)
+		So(err, ShouldBeNil)
+		So(fullURL, ShouldEqual, "https://example.com/?page=5&page_size=3")
 
-		Convey("Should return an empty string with args", func() {
-			e := EmbedArgs{}
-			queryParams := e.BuildQueryString()
-			So(queryParams, ShouldBeBlank)
+		Convey("Should return the base URL without any options", func() {
+			u := "https://example.com/"
+			fullURL, err := addOptions(u, nil)
+			So(err, ShouldNotBeNil)
+			So(fullURL, ShouldEqual, "https://example.com/")
+		})
+	})
+}
+
+func TestPopulatePageValues(t *testing.T) {
+	Convey("populatePageValues should set the correct values for a given paginatedResponse", t, func() {
+		Convey("When it has an invalid Next", func() {
+			r := Response{}
+			err := r.populatePageValues(&paginatedResponse{TotalCount: 5, Next: String("%")})
+			So(err, ShouldNotBeNil)
+			typeErr, ok := err.(*url.Error)
+			So(ok, ShouldBeTrue)
+			So(typeErr.Op, ShouldEqual, "parse")
+		})
+
+		Convey("When it has an invalid Previous", func() {
+			r := Response{}
+			err := r.populatePageValues(&paginatedResponse{TotalCount: 5, Previous: String("%")})
+			So(err, ShouldNotBeNil)
+			typeErr, ok := err.(*url.Error)
+			So(ok, ShouldBeTrue)
+			So(typeErr.Op, ShouldEqual, "parse")
+		})
+
+		Convey("When it has a TotalCount", func() {
+			r := Response{}
+			err := r.populatePageValues(&paginatedResponse{TotalCount: 5})
+			So(err, ShouldBeNil)
+			So(r.TotalCount, ShouldEqual, 5)
+		})
+
+		Convey("When it has TotalCount and Next", func() {
+			r := Response{}
+			err := r.populatePageValues(&paginatedResponse{
+				TotalCount: 5,
+				Next:       String("https://example.com/?page=2"),
+			})
+			So(err, ShouldBeNil)
+			So(r.TotalCount, ShouldEqual, 5)
+			So(r.PreviousPage, ShouldEqual, 0)
+			So(r.NextPage, ShouldEqual, 2)
+			So(r.CurrentPage, ShouldEqual, 1)
+		})
+
+		Convey("When it has TotalCount and Previous", func() {
+			r := Response{}
+			err := r.populatePageValues(&paginatedResponse{
+				TotalCount: 5,
+				Previous:   String("https://example.com/?page=1337"),
+			})
+			So(err, ShouldBeNil)
+			So(r.TotalCount, ShouldEqual, 5)
+			So(r.PreviousPage, ShouldEqual, 1337)
+			So(r.NextPage, ShouldEqual, 0)
+			So(r.CurrentPage, ShouldEqual, 1338)
+		})
+
+		Convey("When it has TotalCount, Previous, and Next", func() {
+			r := Response{}
+			err := r.populatePageValues(&paginatedResponse{
+				TotalCount: 5,
+				Next:       String("https://example.com/?page=3"),
+				Previous:   String("https://example.com/?page=1"),
+			})
+			So(err, ShouldBeNil)
+			So(r.TotalCount, ShouldEqual, 5)
+			So(r.PreviousPage, ShouldEqual, 1)
+			So(r.NextPage, ShouldEqual, 3)
+			So(r.CurrentPage, ShouldEqual, 2)
 		})
 	})
 }
