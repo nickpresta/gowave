@@ -35,7 +35,7 @@ type productList struct {
 	*paginatedResponse
 }
 
-func (p *Product) String() string {
+func (p Product) String() string {
 	return *p.Name
 }
 

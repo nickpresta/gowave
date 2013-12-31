@@ -42,7 +42,7 @@ type User struct {
 //
 // Given a first and last name, FullName will return 'First Last'.
 // Given either a first or last name, FullName will return whichever is non-empty.
-func (u *User) FullName() string {
+func (u User) FullName() string {
 	if u.FirstName == nil && u.LastName == nil {
 		return ""
 	}
@@ -56,7 +56,7 @@ func (u *User) FullName() string {
 	return fmt.Sprintf("%v %v", *u.FirstName, *u.LastName)
 }
 
-func (u *User) String() string {
+func (u User) String() string {
 	return u.FullName()
 }
 

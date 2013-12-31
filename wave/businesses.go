@@ -44,7 +44,7 @@ type Business struct {
 	DateModified        *DateTime `json:"date_modified,omitempty"`
 }
 
-func (b *Business) String() string {
+func (b Business) String() string {
 	return fmt.Sprintf("%v (id=%v, personal=%v)", *b.CompanyName, *b.ID, *b.IsPersonalBusiness)
 }
 

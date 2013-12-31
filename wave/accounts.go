@@ -35,7 +35,7 @@ type Account struct {
 	DateModified          *DateTime `json:"date_modified,omitempty"`
 }
 
-func (a *Account) String() string {
+func (a Account) String() string {
 	return fmt.Sprintf("%v (type=%v, payment=%v)", *a.Name, *a.AccountType, *a.IsPayment)
 }
 

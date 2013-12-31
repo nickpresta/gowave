@@ -23,7 +23,7 @@ type Currency struct {
 	Name   *string `json:"name,omitempty"`
 }
 
-func (c *Currency) String() string {
+func (c Currency) String() string {
 	return fmt.Sprintf("%v (%v)", *c.Code, *c.Name)
 }
 

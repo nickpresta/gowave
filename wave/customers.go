@@ -39,9 +39,9 @@ type Customer struct {
 	Website         *string          `json:"website,omitempty"`
 	Currency        *Currency        `json:"currency,omitempty"`
 	ShippingDetails *ShippingDetails `json:"shipping_details,omitempty"`
-	Address         *Address         `json:address,omitempty"`
 	DateCreated     *DateTime        `json:"date_created,omitempty"`
 	DateModified    *DateTime        `json:"date_modified,omitempty"`
+	*Address
 }
 
 type customerList struct {
@@ -53,7 +53,7 @@ type customerList struct {
 //
 // Given a first and last name, FullName will return 'First Last'.
 // Given either a first or last name, FullName will return whichever is non-empty.
-func (c *Customer) FullName() string {
+func (c Customer) FullName() string {
 	if c.CustomerName != nil {
 		return *c.CustomerName
 	}
@@ -71,7 +71,7 @@ func (c *Customer) FullName() string {
 	return fmt.Sprintf("%v %v", *c.FirstName, *c.LastName)
 }
 
-func (c *Customer) String() string {
+func (c Customer) String() string {
 	fullName := c.FullName()
 	if c.Email == nil {
 		return fullName

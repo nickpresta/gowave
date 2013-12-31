@@ -21,7 +21,7 @@ type Province struct {
 	Slug *string `json:"slug"`
 }
 
-func (p *Province) String() string {
+func (p Province) String() string {
 	return *p.Name
 }
 
@@ -34,7 +34,7 @@ type Country struct {
 	URL          *string    `json:"url,omitempty"`
 }
 
-func (c *Country) String() string {
+func (c Country) String() string {
 	return fmt.Sprintf("%v (%v)", *c.Name, *c.CountryCode)
 }
 
