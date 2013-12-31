@@ -28,14 +28,14 @@ type User struct {
 		Email      *string `json:"email,omitempty"`
 		IsVerified *bool   `json:"is_verified,omitempty"`
 		IsDefault  *bool   `json:"is_default,omitempty"`
-	} `json:"emails"`
+	} `json:"emails,omitempty"`
 	Profile struct {
 		DateOfBirth *Date `json:"date_of_birth,omitempty"`
-	} `json:"profile"`
+	} `json:"profile,omitempty"`
 	Businesses []struct {
 		ID  *string `json:"id,omitempty"`
 		URL *string `json:"url,omitempty"`
-	} `json:"businesses"`
+	} `json:"businesses,omitempty"`
 }
 
 // FullName returns the full name of a customer.
@@ -62,7 +62,7 @@ func (u User) String() string {
 
 // Get a specific user. Accepts "current" to refer to the current user.
 //
-// Wave API docs: http://docs.waveapps.com/endpoints/users.html#get--users-(identity_user_id)-
+// Wave API docs: http://docs.waveapps.com/endpoints/users.html#get--user-
 func (service *UsersService) Get() (*User, *Response, error) {
 	req, err := service.client.NewRequest("GET", "user", nil)
 	if err != nil {
@@ -78,8 +78,8 @@ func (service *UsersService) Get() (*User, *Response, error) {
 
 // Replace an existing user. You cannot create a user using this method.
 //
-// Wave API docs: http://docs.waveapps.com/endpoints/users.html#put--users-(identity_user_id)-
-func (service *UsersService) Replace(user User) (*User, *Response, error) {
+// Wave API docs: http://docs.waveapps.com/endpoints/users.html#put--user-
+func (service *UsersService) Replace(user *User) (*User, *Response, error) {
 	req, err := service.client.NewRequest("PUT", "user", user)
 	if err != nil {
 		return nil, nil, err
@@ -94,8 +94,8 @@ func (service *UsersService) Replace(user User) (*User, *Response, error) {
 
 // Update an existing user. You cannot create a user using this method.
 //
-// Wave API docs: http://docs.waveapps.com/endpoints/users.html#patch--users-(identity_user_id)-
-func (service *UsersService) Update(user User) (*User, *Response, error) {
+// Wave API docs: http://docs.waveapps.com/endpoints/users.html#patch--user-
+func (service *UsersService) Update(user *User) (*User, *Response, error) {
 	req, err := service.client.NewRequest("PATCH", "user", user)
 	if err != nil {
 		return nil, nil, err

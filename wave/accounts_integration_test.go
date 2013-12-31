@@ -32,7 +32,7 @@ func TestAccountsServiceIntegration(t *testing.T) {
 		So(err, ShouldBeNil)
 		So(account, ShouldNotBeNil)
 
-		a := Account{
+		a := &Account{
 			Name:                  String("Checking CREATE TEST Account"),
 			IsPayment:             Bool(true),
 			Currency:              &Currency{Code: "JPY"},

@@ -482,4 +482,26 @@ func TestTypeHelpers(t *testing.T) {
 		So(v.IsNil(), ShouldBeFalse)
 		So(reflect.Indirect(v).Int(), ShouldEqual, 42)
 	})
+
+	Convey("Float64 should return a pointer to a float64", t, func() {
+		v := reflect.ValueOf(Float64(1.0))
+		So(v.Kind(), ShouldEqual, reflect.Ptr)
+		So(v.IsNil(), ShouldBeFalse)
+		So(reflect.Indirect(v).Float(), ShouldEqual, 1.0)
+
+		v = reflect.ValueOf(Float64(0.0))
+		So(v.Kind(), ShouldEqual, reflect.Ptr)
+		So(v.IsNil(), ShouldBeFalse)
+		So(reflect.Indirect(v).Float(), ShouldEqual, 0.0)
+
+		v = reflect.ValueOf(Float64(-1.0))
+		So(v.Kind(), ShouldEqual, reflect.Ptr)
+		So(v.IsNil(), ShouldBeFalse)
+		So(reflect.Indirect(v).Float(), ShouldEqual, -1.0)
+
+		v = reflect.ValueOf(Float64(42.0))
+		So(v.Kind(), ShouldEqual, reflect.Ptr)
+		So(v.IsNil(), ShouldBeFalse)
+		So(reflect.Indirect(v).Float(), ShouldEqual, 42.0)
+	})
 }

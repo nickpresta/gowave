@@ -76,7 +76,7 @@ func (service *AccountsService) Get(businessID string, accountID uint64) (*Accou
 // Create a new account according to a standard account template.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/businesses.html#post--businesses-
-func (service *AccountsService) Create(businessID string, account Account) (*Account, *Response, error) {
+func (service *AccountsService) Create(businessID string, account *Account) (*Account, *Response, error) {
 	url := fmt.Sprintf("businesses/%v/accounts", businessID)
 	req, err := service.client.NewRequest("POST", url, account)
 	if err != nil {
@@ -93,7 +93,7 @@ func (service *AccountsService) Create(businessID string, account Account) (*Acc
 // Replace an existing account. You cannot create an account using this method.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/accounts.html#put--businesses-{business_id}-accounts-{account_id}-
-func (service *AccountsService) Replace(businessID string, accountID uint64, account Account) (*Account, *Response, error) {
+func (service *AccountsService) Replace(businessID string, accountID uint64, account *Account) (*Account, *Response, error) {
 	url := fmt.Sprintf("businesses/%v/accounts/%v", businessID, accountID)
 	req, err := service.client.NewRequest("PUT", url, account)
 	if err != nil {
@@ -110,7 +110,7 @@ func (service *AccountsService) Replace(businessID string, accountID uint64, acc
 // Update an existing account. You cannot create an account using this method.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/accounts.html#patch--businesses-{business_id}-accounts-{account_id}-
-func (service *AccountsService) Update(businessID string, accountID uint64, account Account) (*Account, *Response, error) {
+func (service *AccountsService) Update(businessID string, accountID uint64, account *Account) (*Account, *Response, error) {
 	url := fmt.Sprintf("businesses/%v/accounts/%v", businessID, accountID)
 	req, err := service.client.NewRequest("PATCH", url, account)
 	if err != nil {

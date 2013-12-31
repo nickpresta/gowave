@@ -133,7 +133,7 @@ func TestBusinessesService(t *testing.T) {
 			fmt.Fprint(w, expectedBusinessJSON)
 		})
 
-		b := Business{}
+		b := &Business{}
 		business, _, err := client.Businesses.Create(b)
 		So(err, ShouldBeNil)
 		So(business, ShouldResemble, expectedBusinessStruct)
@@ -148,14 +148,14 @@ func TestBusinessesService(t *testing.T) {
 			fmt.Fprint(w, expectedBusinessJSON)
 		})
 
-		b := Business{}
+		b := &Business{}
 		business, _, err := client.Businesses.Replace("1", b)
 		So(err, ShouldBeNil)
 		So(business, ShouldResemble, expectedBusinessStruct)
 	})
 
 	Convey("REPLACE a Business with an invalid ID", t, func() {
-		business, resp, err := client.Businesses.Replace("%", Business{})
+		business, resp, err := client.Businesses.Replace("%", &Business{})
 		checkInvalidURLError(business, resp, err)
 	})
 
@@ -168,14 +168,14 @@ func TestBusinessesService(t *testing.T) {
 			fmt.Fprint(w, expectedBusinessJSON)
 		})
 
-		b := Business{}
+		b := &Business{}
 		business, _, err := client.Businesses.Update("1", b)
 		So(err, ShouldBeNil)
 		So(business, ShouldResemble, expectedBusinessStruct)
 	})
 
 	Convey("UPDATE a Business with an invalid ID", t, func() {
-		business, resp, err := client.Businesses.Update("%", Business{})
+		business, resp, err := client.Businesses.Update("%", &Business{})
 		checkInvalidURLError(business, resp, err)
 	})
 

@@ -84,7 +84,7 @@ func (service *BusinessesService) Get(id string) (*Business, *Response, error) {
 // Create a new business
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/businesses.html#post--businesses-
-func (service *BusinessesService) Create(business Business) (*Business, *Response, error) {
+func (service *BusinessesService) Create(business *Business) (*Business, *Response, error) {
 	req, err := service.client.NewRequest("POST", "businesses", business)
 	if err != nil {
 		return nil, nil, err
@@ -100,7 +100,7 @@ func (service *BusinessesService) Create(business Business) (*Business, *Respons
 // Replace an existing business. You cannot create a business using this method.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/businesses.html#put--businesses-(identity_business_id)-
-func (service *BusinessesService) Replace(id string, business Business) (*Business, *Response, error) {
+func (service *BusinessesService) Replace(id string, business *Business) (*Business, *Response, error) {
 	url := fmt.Sprintf("businesses/%v", id)
 	req, err := service.client.NewRequest("PUT", url, business)
 	if err != nil {
@@ -117,7 +117,7 @@ func (service *BusinessesService) Replace(id string, business Business) (*Busine
 // Update an existing business. You cannot create a business using this method.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/businesses.html#patch--businesses-(identity_business_id)-
-func (service *BusinessesService) Update(id string, business Business) (*Business, *Response, error) {
+func (service *BusinessesService) Update(id string, business *Business) (*Business, *Response, error) {
 	url := fmt.Sprintf("businesses/%v", id)
 	req, err := service.client.NewRequest("PATCH", url, business)
 	if err != nil {

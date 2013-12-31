@@ -73,7 +73,7 @@ func TestUsersService(t *testing.T) {
 			fmt.Fprint(w, expectedUserJSON)
 		})
 
-		u := User{}
+		u := &User{}
 		user, _, err := client.Users.Replace(u)
 		So(err, ShouldBeNil)
 		So(user, ShouldResemble, expectedUserStruct)
@@ -88,7 +88,7 @@ func TestUsersService(t *testing.T) {
 			fmt.Fprint(w, expectedUserJSON)
 		})
 
-		u := User{}
+		u := &User{}
 		user, _, err := client.Users.Update(u)
 		So(err, ShouldBeNil)
 		So(user, ShouldResemble, expectedUserStruct)

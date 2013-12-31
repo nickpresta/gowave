@@ -139,14 +139,14 @@ func TestProductsService(t *testing.T) {
 			fmt.Fprint(w, expectedProductJSON)
 		})
 
-		c := Product{}
-		products, _, err := client.Products.Create("1", c)
+		p := &Product{}
+		products, _, err := client.Products.Create("1", p)
 		So(err, ShouldBeNil)
 		So(products, ShouldResemble, expectedProductStruct)
 	})
 
 	Convey("CREATE a Product with an invalid ID", t, func() {
-		product, resp, err := client.Products.Create("%", Product{})
+		product, resp, err := client.Products.Create("%", &Product{})
 		checkInvalidURLError(product, resp, err)
 	})
 
@@ -159,14 +159,14 @@ func TestProductsService(t *testing.T) {
 			fmt.Fprint(w, expectedProductJSON)
 		})
 
-		c := Product{}
-		product, _, err := client.Products.Replace("1", 1, c)
+		p := &Product{}
+		product, _, err := client.Products.Replace("1", 1, p)
 		So(err, ShouldBeNil)
 		So(product, ShouldResemble, expectedProductStruct)
 	})
 
 	Convey("REPLACE a Product with an invalid ID", t, func() {
-		product, resp, err := client.Products.Replace("%", 1, Product{})
+		product, resp, err := client.Products.Replace("%", 1, &Product{})
 		checkInvalidURLError(product, resp, err)
 	})
 
@@ -179,14 +179,14 @@ func TestProductsService(t *testing.T) {
 			fmt.Fprint(w, expectedProductJSON)
 		})
 
-		c := Product{}
-		product, _, err := client.Products.Update("1", 1, c)
+		p := &Product{}
+		product, _, err := client.Products.Update("1", 1, p)
 		So(err, ShouldEqual, nil)
 		So(product, ShouldResemble, expectedProductStruct)
 	})
 
 	Convey("UPDATE a Product with an invalid ID", t, func() {
-		product, resp, err := client.Products.Update("%", 1, Product{})
+		product, resp, err := client.Products.Update("%", 1, &Product{})
 		checkInvalidURLError(product, resp, err)
 	})
 

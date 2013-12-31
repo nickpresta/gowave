@@ -122,14 +122,14 @@ func TestAccountsService(t *testing.T) {
 			fmt.Fprint(w, expectedAccountJSON)
 		})
 
-		a := Account{}
+		a := &Account{}
 		account, _, err := client.Accounts.Create("1", a)
 		So(err, ShouldBeNil)
 		So(account, ShouldResemble, expectedAccountStruct)
 	})
 
 	Convey("CREATE an Account with an invalid ID", t, func() {
-		account, resp, err := client.Accounts.Create("%", Account{})
+		account, resp, err := client.Accounts.Create("%", &Account{})
 		checkInvalidURLError(account, resp, err)
 	})
 
@@ -142,14 +142,14 @@ func TestAccountsService(t *testing.T) {
 			fmt.Fprint(w, expectedAccountJSON)
 		})
 
-		a := Account{}
+		a := &Account{}
 		account, _, err := client.Accounts.Replace("1", 1, a)
 		So(err, ShouldBeNil)
 		So(account, ShouldResemble, expectedAccountStruct)
 	})
 
 	Convey("REPLACE an Account with an invalid ID", t, func() {
-		account, resp, err := client.Accounts.Replace("%", 1, Account{})
+		account, resp, err := client.Accounts.Replace("%", 1, &Account{})
 		checkInvalidURLError(account, resp, err)
 	})
 
@@ -162,14 +162,14 @@ func TestAccountsService(t *testing.T) {
 			fmt.Fprint(w, expectedAccountJSON)
 		})
 
-		a := Account{}
+		a := &Account{}
 		account, _, err := client.Accounts.Update("1", 1, a)
 		So(err, ShouldEqual, nil)
 		So(account, ShouldResemble, expectedAccountStruct)
 	})
 
 	Convey("UPDATE an Account with an invalid ID", t, func() {
-		account, resp, err := client.Accounts.Update("%", 1, Account{})
+		account, resp, err := client.Accounts.Update("%", 1, &Account{})
 		checkInvalidURLError(account, resp, err)
 	})
 

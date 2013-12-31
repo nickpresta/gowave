@@ -100,7 +100,7 @@ func (service *ProductsService) Get(businessID string, productID uint64, opts *P
 // Create a new product for a given business.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/products.html#post--businesses-{business_id}-products-
-func (service *ProductsService) Create(businessID string, product Product) (*Product, *Response, error) {
+func (service *ProductsService) Create(businessID string, product *Product) (*Product, *Response, error) {
 	url := fmt.Sprintf("businesses/%v/products", businessID)
 	req, err := service.client.NewRequest("POST", url, product)
 	if err != nil {
@@ -117,7 +117,7 @@ func (service *ProductsService) Create(businessID string, product Product) (*Pro
 // Replace an existing product. You cannot create a product using this method.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/products.html#put--businesses-{business_id}-products-{product_id}-
-func (service *ProductsService) Replace(businessID string, productID uint64, product Product) (*Product, *Response, error) {
+func (service *ProductsService) Replace(businessID string, productID uint64, product *Product) (*Product, *Response, error) {
 	url := fmt.Sprintf("businesses/%v/products/%v", businessID, productID)
 	req, err := service.client.NewRequest("PUT", url, product)
 	if err != nil {
@@ -134,7 +134,7 @@ func (service *ProductsService) Replace(businessID string, productID uint64, pro
 // Update an existing product. You cannot create a product using this method.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/products.html#patch--businesses-{business_id}-products-{product_id}-
-func (service *ProductsService) Update(businessID string, productID uint64, product Product) (*Product, *Response, error) {
+func (service *ProductsService) Update(businessID string, productID uint64, product *Product) (*Product, *Response, error) {
 	url := fmt.Sprintf("businesses/%v/products/%v", businessID, productID)
 	req, err := service.client.NewRequest("PATCH", url, product)
 	if err != nil {

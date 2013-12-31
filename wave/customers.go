@@ -128,7 +128,7 @@ func (service *CustomersService) Get(businessID string, customerID uint64) (*Cus
 // Create a new customer for a given business.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/customers.html#post--businesses-{business_id}-customers-
-func (service *CustomersService) Create(businessID string, customer Customer) (*Customer, *Response, error) {
+func (service *CustomersService) Create(businessID string, customer *Customer) (*Customer, *Response, error) {
 	url := fmt.Sprintf("businesses/%v/customers", businessID)
 	req, err := service.client.NewRequest("POST", url, customer)
 	if err != nil {
@@ -145,7 +145,7 @@ func (service *CustomersService) Create(businessID string, customer Customer) (*
 // Replace an existing customer. You cannot create a customer using this method.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/customers.html#put--businesses-{business_id}-customers-{customer_id}-
-func (service *CustomersService) Replace(businessID string, customerID uint64, customer Customer) (*Customer, *Response, error) {
+func (service *CustomersService) Replace(businessID string, customerID uint64, customer *Customer) (*Customer, *Response, error) {
 	url := fmt.Sprintf("businesses/%v/customers/%v", businessID, customerID)
 	req, err := service.client.NewRequest("PUT", url, customer)
 	if err != nil {
@@ -162,7 +162,7 @@ func (service *CustomersService) Replace(businessID string, customerID uint64, c
 // Update an existing customer. You cannot create a customer using this method.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/customers.html#patch--businesses-{business_id}-customers-{customer_id}-
-func (service *CustomersService) Update(businessID string, customerID uint64, customer Customer) (*Customer, *Response, error) {
+func (service *CustomersService) Update(businessID string, customerID uint64, customer *Customer) (*Customer, *Response, error) {
 	url := fmt.Sprintf("businesses/%v/customers/%v", businessID, customerID)
 	req, err := service.client.NewRequest("PATCH", url, customer)
 	if err != nil {

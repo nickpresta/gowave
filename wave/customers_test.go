@@ -132,14 +132,14 @@ func TestCustomersService(t *testing.T) {
 			fmt.Fprint(w, expectedCustomerJSON)
 		})
 
-		c := Customer{}
+		c := &Customer{}
 		customers, _, err := client.Customers.Create("1", c)
 		So(err, ShouldBeNil)
 		So(customers, ShouldResemble, expectedCustomerStruct)
 	})
 
 	Convey("CREATE a Customer with an invalid ID", t, func() {
-		customer, resp, err := client.Customers.Create("%", Customer{})
+		customer, resp, err := client.Customers.Create("%", &Customer{})
 		checkInvalidURLError(customer, resp, err)
 	})
 
@@ -152,14 +152,14 @@ func TestCustomersService(t *testing.T) {
 			fmt.Fprint(w, expectedCustomerJSON)
 		})
 
-		c := Customer{}
+		c := &Customer{}
 		customer, _, err := client.Customers.Replace("1", 1, c)
 		So(err, ShouldBeNil)
 		So(customer, ShouldResemble, expectedCustomerStruct)
 	})
 
 	Convey("REPLACE a Customer with an invalid ID", t, func() {
-		customer, resp, err := client.Customers.Replace("%", 1, Customer{})
+		customer, resp, err := client.Customers.Replace("%", 1, &Customer{})
 		checkInvalidURLError(customer, resp, err)
 	})
 
@@ -172,14 +172,14 @@ func TestCustomersService(t *testing.T) {
 			fmt.Fprint(w, expectedCustomerJSON)
 		})
 
-		c := Customer{}
+		c := &Customer{}
 		customer, _, err := client.Customers.Update("1", 1, c)
 		So(err, ShouldEqual, nil)
 		So(customer, ShouldResemble, expectedCustomerStruct)
 	})
 
 	Convey("UPDATE a Customer with an invalid ID", t, func() {
-		customer, resp, err := client.Customers.Update("%", 1, Customer{})
+		customer, resp, err := client.Customers.Update("%", 1, &Customer{})
 		checkInvalidURLError(customer, resp, err)
 	})
 
