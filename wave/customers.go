@@ -28,6 +28,7 @@ type Customer struct {
 	ID              uint64           `json:"id,omitempty"`
 	URL             *string          `json:"url,omitempty"`
 	AccountNumber   *string          `json:"account_number,omitempty"`
+	CustomerName    *string          `json:"customer_name,omitempty"`
 	FirstName       *string          `json:"first_name,omitempty"`
 	LastName        *string          `json:"last_name,omitempty"`
 	Email           *string          `json:"email,omitempty"`
@@ -53,6 +54,10 @@ type customerList struct {
 // Given a first and last name, FullName will return 'First Last'.
 // Given either a first or last name, FullName will return whichever is non-empty.
 func (c *Customer) FullName() string {
+	if c.CustomerName != nil {
+		return *c.CustomerName
+	}
+
 	if c.FirstName == nil && c.LastName == nil {
 		return ""
 	}

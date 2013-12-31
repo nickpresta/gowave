@@ -206,6 +206,11 @@ func TestCustomersService(t *testing.T) {
 			c := new(Customer)
 			So(c.FullName(), ShouldBeBlank)
 		})
+		Convey("Only CustomerName should return 'CustomerName'", func() {
+			c := new(Customer)
+			c.CustomerName = String("Foo Bar")
+			So(c.FullName(), ShouldEqual, "Foo Bar")
+		})
 		Convey("No FirstName should return 'LastName'", func() {
 			c := new(Customer)
 			c.LastName = String("Bar")
