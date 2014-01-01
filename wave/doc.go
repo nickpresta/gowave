@@ -14,7 +14,7 @@ http://docs.waveapps.com/
 
 Installation
 
-wave requires Go version 1.1 or greater.
+wave requires Go version 1.2 or greater.
 To download, build and install wave, run:
 
 	go get github.com/NickPresta/gowave/wave
