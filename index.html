@@ -1,0 +1,193 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Gowave by NickPresta</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Gowave</h1>
+        <p>Go client library for accessing the Wave API</p>
+
+        <p class="view"><a href="https://github.com/NickPresta/gowave">View the Project on GitHub <small>NickPresta/gowave</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/NickPresta/gowave/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/NickPresta/gowave/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/NickPresta/gowave">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="gowave" class="anchor" href="#gowave"><span class="octicon octicon-link"></span></a>Gowave</h1>
+
+<p><a href="https://travis-ci.org/NickPresta/gowave"><img src="https://travis-ci.org/NickPresta/gowave.png?branch=master" alt="Build Status"></a>
+<a href="https://drone.io/github.com/NickPresta/gowave/files/coverage.html"><img src="http://i.imgur.com/pK6knhY.gif" alt="Coverage Status"></a>
+<a href="https://godoc.org/github.com/NickPresta/gowave/wave"><img src="https://godoc.org/github.com/NickPresta/gowave/wave?status.png" alt="GoDoc"></a></p>
+
+<p>gowave is a Go client library for accessing the <a href="https://developer.waveapps.com">Wave API</a>.</p>
+
+<p>gowave requires Go version 1.2 or greater.</p>
+
+<p><strong>The wave package is in an ALPHA state.</strong> There is no guarantee of interface stability until the Wave API is "final".</p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>To download, build and install the wave package, run:</p>
+
+<pre><code>go get github.com/NickPresta/gowave/wave
+</code></pre>
+
+<h2>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+
+<p>Import the wave package into your source:</p>
+
+<div class="highlight highlight-go"><pre><span class="kn">import</span> <span class="p">(</span>
+  <span class="s">"github.com/NickPresta/gowave/wave"</span>
+<span class="p">)</span>
+</pre></div>
+
+<p>You will need to create a new Wave client, which will allow you to make requests
+on behalf of a user. The wave package does not handle authentication and
+requires you to provide an http.Client that can handle appropriate
+authentication. The easiest and recommended way to do this is using the <a href="https://code.google.com/p/goauth2/">goauth2</a> package.</p>
+
+<div class="highlight highlight-go"><pre><span class="nx">t</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">oauth</span><span class="p">.</span><span class="nx">Transport</span><span class="p">{</span>
+  <span class="nx">Token</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">oauth</span><span class="p">.</span><span class="nx">Token</span><span class="p">{</span><span class="nx">AccessToken</span><span class="p">:</span> <span class="s">"... your access token ..."</span><span class="p">},</span>
+<span class="p">}</span>
+
+<span class="nx">client</span> <span class="o">:=</span> <span class="nx">wave</span><span class="p">.</span><span class="nx">NewClient</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">Client</span><span class="p">())</span>
+</pre></div>
+
+<h2>
+<a name="creating-and-updating-resources" class="anchor" href="#creating-and-updating-resources"><span class="octicon octicon-link"></span></a>Creating and Updating Resources</h2>
+
+<p>All structs in this library use pointer values so that there is differentiation
+between an unset value and a zero value. This also allows the same structs to be
+encoded and decoded without having to learn two different data types.  Helper
+methods are provided to create pointer values for string, int, float64, and
+bool:</p>
+
+<div class="highlight highlight-go"><pre><span class="nx">product</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">wave</span><span class="p">.</span><span class="nx">Product</span><span class="p">{</span>
+    <span class="nx">Name</span><span class="p">:</span> <span class="nx">wave</span><span class="p">.</span><span class="nx">String</span><span class="p">(</span><span class="s">"Widgets"</span><span class="p">),</span>
+    <span class="nx">Price</span><span class="p">:</span> <span class="nx">wave</span><span class="p">.</span><span class="nx">Float64</span><span class="p">(</span><span class="mf">42.34</span><span class="p">),</span>
+    <span class="nx">IsSold</span><span class="p">:</span> <span class="nx">wave</span><span class="p">.</span><span class="nx">Bool</span><span class="p">(</span><span class="kc">true</span><span class="p">),</span>
+<span class="p">}</span>
+<span class="nx">client</span><span class="p">.</span><span class="nx">Products</span><span class="p">.</span><span class="nx">Create</span><span class="p">(</span><span class="nx">bID</span><span class="p">,</span> <span class="nx">product</span><span class="p">)</span>
+</pre></div>
+
+<h2>
+<a name="optional-parameters" class="anchor" href="#optional-parameters"><span class="octicon octicon-link"></span></a>Optional Parameters</h2>
+
+<p>Some endpoints take optional parameters -- usually LIST and GET methods. For
+example, with Products, you can choose to embed the accounts directly in the
+Product resource. Optional parameters are passed as a pointer to a struct. If
+you do not wish to pass any options and want to take the API defaults, set the
+options struct to nil in the function argument. If you do not wish to pass a
+specific option, you may omit it entirely from the struct. For example:</p>
+
+<div class="highlight highlight-go"><pre><span class="nx">client</span><span class="p">.</span><span class="nx">Products</span><span class="p">.</span><span class="nx">List</span><span class="p">(</span><span class="nx">bID</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">ProductListOptions</span><span class="p">{</span><span class="nx">EmbedAccounts</span><span class="p">:</span> <span class="kc">true</span><span class="p">})</span>
+</pre></div>
+
+<h3>
+<a name="pagination" class="anchor" href="#pagination"><span class="octicon octicon-link"></span></a>Pagination</h3>
+
+<p>Pagination options are passed in the optional parameters:</p>
+
+<div class="highlight highlight-go"><pre><span class="nx">options</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">ProductListOptions</span><span class="p">{</span><span class="nx">PageOptions</span><span class="p">:</span> <span class="nx">wave</span><span class="p">.</span><span class="nx">PageOptions</span><span class="p">{</span><span class="nx">Page</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="nx">PageSize</span><span class="p">:</span> <span class="mi">10</span><span class="p">}}</span>
+<span class="nx">client</span><span class="p">.</span><span class="nx">Products</span><span class="p">.</span><span class="nx">List</span><span class="p">(</span><span class="nx">bID</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
+</pre></div>
+
+<p>Again, omitting the PageOptions struct will not send any pagination parameters.</p>
+
+<h2>
+<a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h2>
+
+<h3>
+<a name="fetch-all-accounts-for-a-given-business" class="anchor" href="#fetch-all-accounts-for-a-given-business"><span class="octicon octicon-link"></span></a>Fetch all Accounts for a given Business</h3>
+
+<div class="highlight highlight-go"><pre><span class="nx">accounts</span><span class="p">,</span> <span class="nx">resp</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nx">Accounts</span><span class="p">.</span><span class="nx">List</span><span class="p">(</span><span class="nx">businessID</span><span class="p">)</span>
+<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="c1">// Do something with accounts</span>
+<span class="k">for</span> <span class="nx">account</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">accounts</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="o">*</span><span class="nx">account</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="c1">// The resp.Body still exists to be read, if you wanted to do further</span>
+<span class="c1">// processing or something</span>
+<span class="nx">io</span><span class="p">.</span><span class="nx">Copy</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">Response</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span>
+</pre></div>
+
+<h3>
+<a name="create-a-business" class="anchor" href="#create-a-business"><span class="octicon octicon-link"></span></a>Create a Business</h3>
+
+<div class="highlight highlight-go"><pre><span class="nx">b</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Business</span><span class="p">{</span>
+    <span class="nx">CompanyName</span><span class="p">:</span>         <span class="s">"My New Business"</span><span class="p">,</span>
+    <span class="nx">PrimaryCurrencyCode</span><span class="p">:</span> <span class="s">"CAD"</span><span class="p">,</span>
+    <span class="nx">BusinessTypeInfo</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">BusinessTypeInfo</span><span class="p">{</span>
+        <span class="nx">BusinessType</span><span class="p">:</span>       <span class="nx">String</span><span class="p">(</span><span class="s">"consultants_professionals"</span><span class="p">),</span>
+        <span class="nx">BusinessSubtype</span><span class="p">:</span>    <span class="nx">String</span><span class="p">(</span><span class="s">"consultants_professionals__communications"</span><span class="p">),</span>
+        <span class="nx">OrganizationalType</span><span class="p">:</span> <span class="nx">String</span><span class="p">(</span><span class="s">"partnership_1"</span><span class="p">),</span>
+    <span class="p">},</span>
+    <span class="nx">Address</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">Address</span><span class="p">{</span>
+        <span class="nx">Country</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">Country</span><span class="p">{</span>
+            <span class="nx">CountryCode</span><span class="p">:</span> <span class="s">"CA"</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+<span class="nx">business</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">integrationClient</span><span class="p">.</span><span class="nx">Businesses</span><span class="p">.</span><span class="nx">Create</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
+<span class="c1">// Do something with business</span>
+</pre></div>
+
+<h3>
+<a name="delete-a-customer" class="anchor" href="#delete-a-customer"><span class="octicon octicon-link"></span></a>Delete a Customer</h3>
+
+<div class="highlight highlight-go"><pre><span class="nx">resp</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nx">Customers</span><span class="p">.</span><span class="nx">Delete</span><span class="p">(</span><span class="nx">businessID</span><span class="p">,</span> <span class="nx">customerID</span><span class="p">)</span>
+<span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="c1">// Customer deleted. Success!</span>
+<span class="p">}</span>
+</pre></div>
+
+<h2>
+<a name="thanks-and-inspiration" class="anchor" href="#thanks-and-inspiration"><span class="octicon octicon-link"></span></a>Thanks and Inspiration</h2>
+
+<p>This library is heavily inspired by <a href="https://github.com/google/go-github">go-github</a>, although there is no affiliation
+or endorsement in any way by the go-github contributors or Google Inc itself.</p>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>This client library is distributed under the BSD-style license found in the <a href="./LICENSE">LICENSE</a>.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/NickPresta">NickPresta</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-46745762-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
