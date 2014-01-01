@@ -17,14 +17,14 @@ Installation
 wave requires Go version 1.1 or greater.
 To download, build and install wave, run:
 
-	go get github.com/nickpresta/gowave/wave
+	go get github.com/NickPresta/gowave/wave
 
 Getting Started
 
 Import wave into your source:
 
 	import (
-		"github.com/nickpresta/gowave/wave"
+		"github.com/NickPresta/gowave/wave"
 	)
 
 You will need to create a new Wave client, which will allow you to make requests

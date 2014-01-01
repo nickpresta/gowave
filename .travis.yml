@@ -4,8 +4,8 @@ go:
     - 1.2
     - tip
 install:
-    - go list -f '{{range .Imports}}{{if ne . "github.com/nickpresta/gowave/wave"}}{{.}} {{end}}{{end}}' ./... | xargs go get -v
-    - go list -f '{{range .TestImports}}{{if ne . "github.com/nickpresta/gowave/wave"}}{{.}} {{end}}{{end}}' ./... | xargs go get -v
+    - go list -f '{{range .Imports}}{{.}} {{end}}' ./... | xargs go get -v
+    - go list -f '{{range .TestImports}}{{.}} {{end}}' ./... | xargs go get -v
     - go build -v ./...
 script:
     - go test -v -coverprofile=cover.out ./...

@@ -13,7 +13,7 @@ gowave requires Go version 1.1 or greater.
 ## Usage
 
 ```go
-import "github.com/nickpresta/gowave/wave"
+import "github.com/NickPresta/gowave/wave"
 ```
 
 ## Authentication

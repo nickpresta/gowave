@@ -10,7 +10,7 @@ import (
 	"os"
 
 	"code.google.com/p/goauth2/oauth"
-	"github.com/nickpresta/gowave/wave"
+	"github.com/NickPresta/gowave/wave"
 )
 
 var (
