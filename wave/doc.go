@@ -55,7 +55,7 @@ bool:
 
 Optional Parameters
 
-Some endpoints take optional paramters -- usually LIST and GET methods. For
+Some endpoints take optional parameters -- usually LIST and GET methods. For
 example, with Products, you can choose to embed the accounts directly in the
 Product resource. Optional parameters are passed as a pointer to a struct. If
 you do not wish to pass any options and want to take the API defaults, set the
