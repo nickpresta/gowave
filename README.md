@@ -1,7 +1,7 @@
 # Gowave
 
 [![Build Status](https://travis-ci.org/NickPresta/gowave.png?branch=master)](https://travis-ci.org/NickPresta/gowave)
-[![Coverage Status](https://coveralls.io/repos/NickPresta/gowave/badge.png?branch=HEAD)](https://coveralls.io/r/NickPresta/gowave?branch=HEAD)
+[![Coverage Status](http://i.imgur.com/pK6knhY.gif)](https://drone.io/github.com/NickPresta/gowave/files/coverage.html)
 [![GoDoc](https://godoc.org/github.com/NickPresta/gowave/wave?status.png)](https://godoc.org/github.com/NickPresta/gowave/wave)
 
 gowave is a Go client library for accessing the [Wave API](https://developer.waveapps.com).
