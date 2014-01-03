@@ -81,9 +81,8 @@ func main() {
 	client := wave.NewClient(t.Client())
 
 	if *businesses {
-		businesses, resp, err := client.Businesses.List()
-		fatal(resp, err)
-		printResource(businesses)
+		businesses, resp, err := client.Businesses.List(&wave.BusinessListOptions{PageOptions: wave.PageOptions{Page: *page, PageSize: *pageSize}})
+		p(businesses, resp, err)
 	}
 
 	if *business != "" {

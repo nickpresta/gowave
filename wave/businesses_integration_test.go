@@ -19,7 +19,7 @@ func TestBusinessessServiceIntegration(t *testing.T) {
 
 	// Skip until the API drops trailing slashes
 	SkipConvey("Full end-to-end Business integration", t, func() {
-		businesses, _, err := integrationClient.Businesses.List()
+		businesses, _, err := integrationClient.Businesses.List(nil)
 		So(err, ShouldBeNil)
 		bID := businesses[0].ID
 

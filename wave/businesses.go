@@ -44,24 +44,38 @@ type Business struct {
 	DateModified        *DateTime `json:"date_modified,omitempty"`
 }
 
+type businessList struct {
+	Results []Business `json:"results"`
+	*paginatedResponse
+}
+
 func (b Business) String() string {
 	return fmt.Sprintf("%v (id=%v, personal=%v)", *b.CompanyName, *b.ID, *b.IsPersonalBusiness)
+}
+
+// BusinessListOptions specifies the optional parameters to the LIST endpoint
+type BusinessListOptions struct {
+	PageOptions
 }
 
 // List all businesses owned by the authenticated user.
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/businesses.html#get--businesses-
-func (service *BusinessesService) List() ([]Business, *Response, error) {
-	req, err := service.client.NewRequest("GET", "businesses", nil)
+func (service *BusinessesService) List(opts *BusinessListOptions) ([]Business, *Response, error) {
+	url, err := addOptions("businesses", opts)
 	if err != nil {
 		return nil, nil, err
 	}
-	businesses := new([]Business)
-	resp, err := service.client.Do(req, businesses, false)
+	req, err := service.client.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+	listResponse := new(businessList)
+	resp, err := service.client.Do(req, listResponse, true)
 	if err != nil {
 		return nil, resp, err
 	}
-	return *businesses, resp, nil
+	return listResponse.Results, resp, nil
 }
 
 // Get an existing business.

@@ -77,6 +77,7 @@ const (
 	expectedCustomersJSON = `{
 "next": null,
 "previous": null,
+"total_count": 1,
 "results": [` + expectedCustomerJSON + "]}"
 )
 

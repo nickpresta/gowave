@@ -47,7 +47,11 @@ const (
 		"date_created":"2009-11-10T23:00:00+00:00",
 		"date_modified":"2009-11-10T23:00:00+00:00"
 	}`
-	expectedBusinessesJSON = "[" + expectedBusinessJSON + "]"
+	expectedBusinessesJSON = `{
+"next": null,
+"previous": null,
+"total_count": 1,
+"results": [` + expectedBusinessJSON + "]}"
 )
 
 func TestBusinessesService(t *testing.T) {
@@ -99,7 +103,7 @@ func TestBusinessesService(t *testing.T) {
 			fmt.Fprint(w, expectedBusinessesJSON)
 		})
 
-		businesses, _, err := client.Businesses.List()
+		businesses, _, err := client.Businesses.List(nil)
 		b := []Business{*expectedBusinessStruct}
 		So(err, ShouldBeNil)
 		So(businesses, ShouldResemble, b)
