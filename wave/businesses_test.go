@@ -23,7 +23,7 @@ const (
 		"primary_currency_code":"CAD",
 		"business_type":"business type",
 		"business_subtype":"business sub-type",
-		"organizational_type":"organizational type",
+		"organization_type":"organization type",
 		"address1":"Address 1",
 		"address2":"Address 2",
 		"city":"City",
@@ -43,15 +43,10 @@ const (
 		"toll_free_phone_number":"416-555-5557",
 		"fax_number":"416-555-5558",
 		"website":"https://example.com",
-		"is_personal_business":false,
 		"date_created":"2009-11-10T23:00:00+00:00",
 		"date_modified":"2009-11-10T23:00:00+00:00"
 	}`
-	expectedBusinessesJSON = `{
-"next": null,
-"previous": null,
-"total_count": 1,
-"results": [` + expectedBusinessJSON + "]}"
+	expectedBusinessesJSON = "[" + expectedBusinessJSON + "]"
 )
 
 func TestBusinessesService(t *testing.T) {
@@ -67,7 +62,7 @@ func TestBusinessesService(t *testing.T) {
 			PrimaryCurrencyCode: String("CAD"),
 			BusinessType:        String("business type"),
 			BusinessSubtype:     String("business sub-type"),
-			OrganizationalType:  String("organizational type"),
+			OrganizationType:    String("organization type"),
 			Address1:            String("Address 1"),
 			Address2:            String("Address 2"),
 			City:                String("City"),
@@ -87,7 +82,6 @@ func TestBusinessesService(t *testing.T) {
 			TollFreePhoneNumber: String("416-555-5557"),
 			FaxNumber:           String("416-555-5558"),
 			Website:             String("https://example.com"),
-			IsPersonalBusiness:  Bool(false),
 			DateCreated:         &datetime,
 			DateModified:        &datetime,
 		}
@@ -186,8 +180,7 @@ func TestBusinessesService(t *testing.T) {
 	Convey("String method on Business", t, func() {
 		b := new(Business)
 		b.CompanyName = String("Company Test")
-		b.IsPersonalBusiness = Bool(true)
 		b.ID = String("id")
-		So(b.String(), ShouldEqual, "Company Test (id=id, personal=true)")
+		So(b.String(), ShouldEqual, "Company Test (id=id)")
 	})
 }

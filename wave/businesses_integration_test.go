@@ -35,9 +35,9 @@ func TestBusinessessServiceIntegration(t *testing.T) {
 			CompanyName:         "CREATE TEST Business",
 			PrimaryCurrencyCode: "CAD",
 			BusinessTypeInfo: &BusinessTypeInfo{
-				BusinessType:       String("consultants_professionals"),
-				BusinessSubtype:    String("consultants_professionals__communications"),
-				OrganizationalType: String("partnership_1"),
+				BusinessType:     String("consultants_professionals"),
+				BusinessSubtype:  String("consultants_professionals__communications"),
+				OrganizationType: String("partnership"),
 			},
 			Address: &Address{
 				Country: &Country{

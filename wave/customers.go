@@ -44,11 +44,6 @@ type Customer struct {
 	*Address
 }
 
-type customerList struct {
-	Results []Customer `json:"results"`
-	*paginatedResponse
-}
-
 // FullName returns the full name of a customer.
 //
 // Given a first and last name, FullName will return 'First Last'.
@@ -100,12 +95,12 @@ func (service *CustomersService) List(businessID string, opts *CustomerListOptio
 	if err != nil {
 		return nil, nil, err
 	}
-	listResponse := new(customerList)
-	resp, err := service.client.Do(req, listResponse, true)
+	customers := new([]Customer)
+	resp, err := service.client.Do(req, customers)
 	if err != nil {
 		return nil, resp, err
 	}
-	return listResponse.Results, resp, nil
+	return *customers, resp, nil
 }
 
 // Get an existing customer for a given business.
@@ -118,7 +113,7 @@ func (service *CustomersService) Get(businessID string, customerID uint64) (*Cus
 		return nil, nil, err
 	}
 	customer := new(Customer)
-	resp, err := service.client.Do(req, customer, false)
+	resp, err := service.client.Do(req, customer)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -135,7 +130,7 @@ func (service *CustomersService) Create(businessID string, customer *Customer) (
 		return nil, nil, err
 	}
 	c := new(Customer)
-	resp, err := service.client.Do(req, c, false)
+	resp, err := service.client.Do(req, c)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -152,7 +147,7 @@ func (service *CustomersService) Replace(businessID string, customerID uint64, c
 		return nil, nil, err
 	}
 	c := new(Customer)
-	resp, err := service.client.Do(req, c, false)
+	resp, err := service.client.Do(req, c)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -169,7 +164,7 @@ func (service *CustomersService) Update(businessID string, customerID uint64, cu
 		return nil, nil, err
 	}
 	c := new(Customer)
-	resp, err := service.client.Do(req, c, false)
+	resp, err := service.client.Do(req, c)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -185,5 +180,5 @@ func (service *CustomersService) Delete(businessID string, customerID uint64) (*
 	if err != nil {
 		return nil, err
 	}
-	return service.client.Do(req, nil, false)
+	return service.client.Do(req, nil)
 }

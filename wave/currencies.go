@@ -36,7 +36,7 @@ func (service *CurrenciesService) List() ([]Currency, *Response, error) {
 		return nil, nil, err
 	}
 	currencies := new([]Currency)
-	resp, err := service.client.Do(req, currencies, false)
+	resp, err := service.client.Do(req, currencies)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -53,7 +53,7 @@ func (service *CurrenciesService) Get(code string) (*Currency, *Response, error)
 		return nil, nil, err
 	}
 	currency := new(Currency)
-	resp, err := service.client.Do(req, currency, false)
+	resp, err := service.client.Do(req, currency)
 	if err != nil {
 		return nil, resp, err
 	}

@@ -125,12 +125,6 @@ func main() {
 		p(products, resp, err)
 	}
 
-	if *provinces != "" {
-		provinces, resp, err := client.Countries.Provinces(*provinces)
-		fatal(resp, err)
-		printResource(provinces)
-	}
-
 	if *user {
 		user, resp, err := client.Users.Get()
 		fatal(resp, err)
@@ -164,7 +158,7 @@ func fatal(resp *wave.Response, err error) {
 }
 
 func printPaginationInformation(r *wave.Response) {
-	fmt.Printf("Total Count: %v\nCurrent Page: %v\nNext Page: %v\nPrevious Page: %v\n", r.TotalCount, r.CurrentPage, r.NextPage, r.PreviousPage)
+	fmt.Printf("Total: %v\n\nNext: %v\nPrevious: %v\nFirst: %v\nLast: %v\n", r.TotalCount, r.NextPage, r.PreviousPage, r.FirstPage, r.LastPage)
 }
 
 func printResource(r interface{}) {

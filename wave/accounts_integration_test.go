@@ -9,9 +9,9 @@
 package wave
 
 import (
+	. "github.com/smartystreets/goconvey/convey"
 	"net/http"
 	"testing"
-	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestAccountsServiceIntegration(t *testing.T) {

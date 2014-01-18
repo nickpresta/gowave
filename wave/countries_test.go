@@ -92,26 +92,6 @@ func TestCountriesService(t *testing.T) {
 		checkInvalidURLError(country, resp, err)
 	})
 
-	Convey("LIST all provinces for a given country", t, func() {
-		setUp()
-		defer tearDown()
-
-		mux.HandleFunc("/countries/CA/provinces", func(w http.ResponseWriter, r *http.Request) {
-			So(r.Method, ShouldEqual, "GET")
-			fmt.Fprint(w, expectedProvincesJSON)
-		})
-
-		provinces, _, err := client.Countries.Provinces("CA")
-		p := provincesStruct()
-		So(err, ShouldBeNil)
-		So(provinces, ShouldResemble, p)
-	})
-
-	Convey("LIST all provinces for a given country with an invalid code", t, func() {
-		_, resp, err := client.Countries.Provinces("%")
-		checkInvalidURLError(nil, resp, err)
-	})
-
 	Convey("String method on Country", t, func() {
 		c := new(Country)
 		c.Name = String("Canada")

@@ -30,11 +30,6 @@ type Product struct {
 	DateModified   *DateTime `json:"date_modified,omitempty"`
 }
 
-type productList struct {
-	Results []Product `json:"results"`
-	*paginatedResponse
-}
-
 func (p Product) String() string {
 	return *p.Name
 }
@@ -68,12 +63,12 @@ func (service *ProductsService) List(businessID string, opts *ProductListOptions
 	if err != nil {
 		return nil, nil, err
 	}
-	listResponse := new(productList)
-	resp, err := service.client.Do(req, listResponse, true)
+	products := new([]Product)
+	resp, err := service.client.Do(req, products)
 	if err != nil {
 		return nil, resp, err
 	}
-	return listResponse.Results, resp, nil
+	return *products, resp, nil
 }
 
 // Get an existing product for a given business.
@@ -90,7 +85,7 @@ func (service *ProductsService) Get(businessID string, productID uint64, opts *P
 		return nil, nil, err
 	}
 	product := new(Product)
-	resp, err := service.client.Do(req, product, false)
+	resp, err := service.client.Do(req, product)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -107,7 +102,7 @@ func (service *ProductsService) Create(businessID string, product *Product) (*Pr
 		return nil, nil, err
 	}
 	p := new(Product)
-	resp, err := service.client.Do(req, p, false)
+	resp, err := service.client.Do(req, p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -124,7 +119,7 @@ func (service *ProductsService) Replace(businessID string, productID uint64, pro
 		return nil, nil, err
 	}
 	p := new(Product)
-	resp, err := service.client.Do(req, p, false)
+	resp, err := service.client.Do(req, p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -141,7 +136,7 @@ func (service *ProductsService) Update(businessID string, productID uint64, prod
 		return nil, nil, err
 	}
 	p := new(Product)
-	resp, err := service.client.Do(req, p, false)
+	resp, err := service.client.Do(req, p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -157,5 +152,5 @@ func (service *ProductsService) Delete(businessID string, productID uint64) (*Re
 	if err != nil {
 		return nil, err
 	}
-	return service.client.Do(req, nil, false)
+	return service.client.Do(req, nil)
 }

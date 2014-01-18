@@ -306,7 +306,7 @@ func TestDo(t *testing.T) {
 		})
 		req, _ := client.NewRequest("GET", "/", nil)
 		body := new(data)
-		_, err := client.Do(req, body, false)
+		_, err := client.Do(req, body)
 		So(err, ShouldBeNil)
 		So(body, ShouldResemble, &data{I: 1})
 	})
@@ -317,12 +317,12 @@ func TestDo(t *testing.T) {
 			http.Error(w, "Not Found", http.StatusNotFound)
 		})
 		req, _ := client.NewRequest("GET", "/", nil)
-		resp, err := client.Do(req, nil, false)
+		resp, err := client.Do(req, nil)
 		So(err, ShouldNotBeNil)
 		So(resp.StatusCode, ShouldEqual, http.StatusNotFound)
 	})
 	Convey("Passing in a bad request", t, func() {
-		_, err := client.Do(&http.Request{}, nil, false)
+		_, err := client.Do(&http.Request{}, nil)
 		So(err, ShouldNotBeNil)
 	})
 }
@@ -368,70 +368,139 @@ func TestPageOptions(t *testing.T) {
 }
 
 func TestPopulatePageValues(t *testing.T) {
-	Convey("populatePageValues should set the correct values for a given paginatedResponse", t, func() {
+	Convey("populatePageValues should set the correct values for Links and X-Total-Count", t, func() {
 		Convey("When it has an invalid Next", func() {
-			r := Response{}
-			err := r.populatePageValues(&paginatedResponse{TotalCount: 5, Next: String("%")})
-			So(err, ShouldNotBeNil)
-			typeErr, ok := err.(*url.Error)
-			So(ok, ShouldBeTrue)
-			So(typeErr.Op, ShouldEqual, "parse")
+			r := &http.Response{
+				Header: http.Header{
+					"Link": {
+						`<https://api.waveapps.com/?page=1>; rel="first",` +
+							` <https://api.waveapps.com/?page=2>; rel="prev",` +
+							` <https://api.waveapps.com/?page=a>; rel="next",` +
+							` <https://api.waveapps.com/?page=5>; rel="last"`,
+					},
+				},
+			}
+			resp := newResponse(r)
+			So(resp.NextPage, ShouldEqual, 0)
 		})
 
 		Convey("When it has an invalid Previous", func() {
-			r := Response{}
-			err := r.populatePageValues(&paginatedResponse{TotalCount: 5, Previous: String("%")})
-			So(err, ShouldNotBeNil)
-			typeErr, ok := err.(*url.Error)
-			So(ok, ShouldBeTrue)
-			So(typeErr.Op, ShouldEqual, "parse")
+			r := &http.Response{
+				Header: http.Header{
+					"Link": {
+						`<https://api.waveapps.com/?page=1>; rel="first",` +
+							` <https://api.waveapps.com/?page=a>; rel="prev",` +
+							` <https://api.waveapps.com/?page=4>; rel="next",` +
+							` <https://api.waveapps.com/?page=5>; rel="last"`,
+					},
+				},
+			}
+			resp := newResponse(r)
+			So(resp.PreviousPage, ShouldEqual, 0)
 		})
 
 		Convey("When it has a TotalCount", func() {
-			r := Response{}
-			err := r.populatePageValues(&paginatedResponse{TotalCount: 5})
-			So(err, ShouldBeNil)
-			So(r.TotalCount, ShouldEqual, 5)
+			r := &http.Response{
+				Header: http.Header{
+					"X-Total-Count": {
+						"42",
+					},
+				},
+			}
+			resp := newResponse(r)
+			So(resp.TotalCount, ShouldEqual, 42)
 		})
 
-		Convey("When it has TotalCount and Next", func() {
-			r := Response{}
-			err := r.populatePageValues(&paginatedResponse{
-				TotalCount: 5,
-				Next:       String("https://example.com/?page=2"),
-			})
-			So(err, ShouldBeNil)
-			So(r.TotalCount, ShouldEqual, 5)
-			So(r.PreviousPage, ShouldEqual, 0)
-			So(r.NextPage, ShouldEqual, 2)
-			So(r.CurrentPage, ShouldEqual, 1)
+		Convey("When it has TotalCount, Next, and Previous", func() {
+			r := &http.Response{
+				Header: http.Header{
+					"Link": {
+						`<https://api.waveapps.com/?page=1>; rel="first",` +
+							` <https://api.waveapps.com/?page=2>; rel="prev",` +
+							` <https://api.waveapps.com/?page=4>; rel="next",` +
+							` <https://api.waveapps.com/?page=5>; rel="last"`,
+					},
+					"X-Total-Count": {
+						"42",
+					},
+				},
+			}
+			resp := newResponse(r)
+			So(resp.NextPage, ShouldEqual, 4)
+			So(resp.PreviousPage, ShouldEqual, 2)
+			So(resp.TotalCount, ShouldEqual, 42)
 		})
 
-		Convey("When it has TotalCount and Previous", func() {
-			r := Response{}
-			err := r.populatePageValues(&paginatedResponse{
-				TotalCount: 5,
-				Previous:   String("https://example.com/?page=1337"),
-			})
-			So(err, ShouldBeNil)
-			So(r.TotalCount, ShouldEqual, 5)
-			So(r.PreviousPage, ShouldEqual, 1337)
-			So(r.NextPage, ShouldEqual, 0)
-			So(r.CurrentPage, ShouldEqual, 1338)
+		Convey("Without an href", func() {
+			r := &http.Response{
+				Header: http.Header{
+					"Link": {
+						`rel="first",` +
+							` <https://api.waveapps.com/?page=2>; rel="prev",` +
+							` <https://api.waveapps.com/?page=4>; rel="next",` +
+							` <https://api.waveapps.com/?page=5>; rel="last"`,
+					},
+				},
+			}
+			resp := newResponse(r)
+			So(resp.FirstPage, ShouldEqual, 0)
+			So(resp.LastPage, ShouldEqual, 5)
+			So(resp.PreviousPage, ShouldEqual, 2)
+			So(resp.NextPage, ShouldEqual, 4)
 		})
 
-		Convey("When it has TotalCount, Previous, and Next", func() {
-			r := Response{}
-			err := r.populatePageValues(&paginatedResponse{
-				TotalCount: 5,
-				Next:       String("https://example.com/?page=3"),
-				Previous:   String("https://example.com/?page=1"),
-			})
-			So(err, ShouldBeNil)
-			So(r.TotalCount, ShouldEqual, 5)
-			So(r.PreviousPage, ShouldEqual, 1)
-			So(r.NextPage, ShouldEqual, 3)
-			So(r.CurrentPage, ShouldEqual, 2)
+		Convey("Without a properly formatted href", func() {
+			r := &http.Response{
+				Header: http.Header{
+					"Link": {
+						`<https://api.waveapps.com; rel="first",` +
+							` <https://api.waveapps.com/?page=2>; rel="prev",` +
+							` <https://api.waveapps.com/?page=4>; rel="next",` +
+							` <https://api.waveapps.com/?page=5>; rel="last"`,
+					},
+				},
+			}
+			resp := newResponse(r)
+			So(resp.FirstPage, ShouldEqual, 0)
+			So(resp.LastPage, ShouldEqual, 5)
+			So(resp.PreviousPage, ShouldEqual, 2)
+			So(resp.NextPage, ShouldEqual, 4)
+		})
+
+		Convey("Without a properly formatted url", func() {
+			r := &http.Response{
+				Header: http.Header{
+					"Link": {
+						`<%%>; rel="first",` +
+							` <https://api.waveapps.com/?page=2>; rel="prev",` +
+							` <https://api.waveapps.com/?page=4>; rel="next",` +
+							` <https://api.waveapps.com/?page=5>; rel="last"`,
+					},
+				},
+			}
+			resp := newResponse(r)
+			So(resp.FirstPage, ShouldEqual, 0)
+			So(resp.LastPage, ShouldEqual, 5)
+			So(resp.PreviousPage, ShouldEqual, 2)
+			So(resp.NextPage, ShouldEqual, 4)
+		})
+
+		Convey("Without a page query string", func() {
+			r := &http.Response{
+				Header: http.Header{
+					"Link": {
+						`<https://api.waveapps.com/?foobar=5>; rel="first",` +
+							` <https://api.waveapps.com/?page=2>; rel="prev",` +
+							` <https://api.waveapps.com/?page=4>; rel="next",` +
+							` <https://api.waveapps.com/?page=5>; rel="last"`,
+					},
+				},
+			}
+			resp := newResponse(r)
+			So(resp.FirstPage, ShouldEqual, 0)
+			So(resp.LastPage, ShouldEqual, 5)
+			So(resp.PreviousPage, ShouldEqual, 2)
+			So(resp.NextPage, ShouldEqual, 4)
 		})
 	})
 }

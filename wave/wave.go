@@ -17,6 +17,7 @@ import (
 	"reflect"
 	"runtime"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/google/go-querystring/query"
@@ -87,17 +88,12 @@ func addOptions(s string, opt interface{}) (string, error) {
 	return u.String(), nil
 }
 
-type paginatedResponse struct {
-	Next       *string `json:"next,omitempty"`
-	Previous   *string `json:"previous,omitempty"`
-	TotalCount int     `json:"total_count,omitempty"`
-}
-
 // Response is a Wave API response. This embeds the standard http.Response and provides pagination information.
 type Response struct {
-	CurrentPage  int
 	NextPage     int
 	PreviousPage int
+	FirstPage    int
+	LastPage     int
 	TotalCount   int
 	*http.Response
 }
@@ -211,17 +207,23 @@ func (c *Client) NewRequest(method string, urlStr string, body interface{}) (*ht
 	return req, nil
 }
 
+func newResponse(resp *http.Response) *Response {
+	r := &Response{Response: resp}
+	r.populatePageValues()
+	return r
+}
+
 // Do sends an API request and returns the API response.
 // The API response is decoded and stored in the value pointed to by v, or returned
 // as an error if an API error has occured.
-func (c *Client) Do(request *http.Request, v interface{}, isPaginated bool) (*Response, error) {
+func (c *Client) Do(request *http.Request, v interface{}) (*Response, error) {
 	resp, err := c.client.Do(request)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	response := &Response{Response: resp}
+	response := newResponse(resp)
 
 	if err = CheckResponse(response.Response); err != nil {
 		return response, err
@@ -238,43 +240,53 @@ func (c *Client) Do(request *http.Request, v interface{}, isPaginated bool) (*Re
 		err = json.Unmarshal(bufBytes, &v)
 	}
 
-	if err == nil && isPaginated {
-		// parse out the pagination information
-		p := new(paginatedResponse)
-		json.Unmarshal(bufBytes, &p)
-		err = response.populatePageValues(p)
-	}
 	return response, err
 }
 
-func (r *Response) populatePageValues(opts *paginatedResponse) error {
-	r.TotalCount = opts.TotalCount
+func (r *Response) populatePageValues() {
+	if totalCount, ok := r.Response.Header["X-Total-Count"]; ok && len(totalCount) > 0 {
+		r.TotalCount, _ = strconv.Atoi(totalCount[0])
+	}
 
-	if opts.Next != nil {
-		u, err := url.Parse(*opts.Next)
-		if err != nil {
-			return err
+	if links, ok := r.Response.Header["Link"]; ok && len(links) > 0 {
+		for _, link := range strings.Split(links[0], ",") {
+			segments := strings.Split(strings.TrimSpace(link), ";")
+
+			// link must at least have href and rel
+			if len(segments) < 2 {
+				continue
+			}
+
+			// ensure href is properly formatted
+			if !strings.HasPrefix(segments[0], "<") || !strings.HasSuffix(segments[0], ">") {
+				continue
+			}
+
+			// try to pull out page parameter
+			url, err := url.Parse(segments[0][1 : len(segments[0])-1])
+			if err != nil {
+				continue
+			}
+			page := url.Query().Get("page")
+			if page == "" {
+				continue
+			}
+
+			for _, segment := range segments[1:] {
+				switch strings.TrimSpace(segment) {
+				case `rel="next"`:
+					r.NextPage, _ = strconv.Atoi(page)
+				case `rel="prev"`:
+					r.PreviousPage, _ = strconv.Atoi(page)
+				case `rel="first"`:
+					r.FirstPage, _ = strconv.Atoi(page)
+				case `rel="last"`:
+					r.LastPage, _ = strconv.Atoi(page)
+				}
+
+			}
 		}
-		r.NextPage, _ = strconv.Atoi(u.Query().Get("page"))
 	}
-
-	if opts.Previous != nil {
-		u, err := url.Parse(*opts.Previous)
-		if err != nil {
-			return err
-		}
-		r.PreviousPage, _ = strconv.Atoi(u.Query().Get("page"))
-	}
-
-	if opts.Next == nil && opts.Previous == nil {
-		r.CurrentPage = 1
-	} else if opts.Previous != nil {
-		r.CurrentPage = r.PreviousPage + 1
-	} else if opts.Next != nil {
-		r.CurrentPage = r.NextPage - 1
-	}
-
-	return nil
 }
 
 // CheckResponse checks the API response for errors, and returns them if

@@ -27,7 +27,7 @@ type Business struct {
 	PrimaryCurrencyCode *string   `json:"primary_currency_code,omitempty"`
 	BusinessType        *string   `json:"business_type,omitempty"`
 	BusinessSubtype     *string   `json:"business_subtype,omitempty"`
-	OrganizationalType  *string   `json:"organizational_type,omitempty"`
+	OrganizationType    *string   `json:"organization_type,omitempty"`
 	Address1            *string   `json:"address1,omitempty"`
 	Address2            *string   `json:"address2,omitempty"`
 	City                *string   `json:"city,omitempty"`
@@ -39,18 +39,12 @@ type Business struct {
 	TollFreePhoneNumber *string   `json:"toll_free_phone_number,omitempty"`
 	FaxNumber           *string   `json:"fax_number,omitempty"`
 	Website             *string   `json:"website,omitempty"`
-	IsPersonalBusiness  *bool     `json:"is_personal_business,omitempty"`
 	DateCreated         *DateTime `json:"date_created,omitempty"`
 	DateModified        *DateTime `json:"date_modified,omitempty"`
 }
 
-type businessList struct {
-	Results []Business `json:"results"`
-	*paginatedResponse
-}
-
 func (b Business) String() string {
-	return fmt.Sprintf("%v (id=%v, personal=%v)", *b.CompanyName, *b.ID, *b.IsPersonalBusiness)
+	return fmt.Sprintf("%v (id=%v)", *b.CompanyName, *b.ID)
 }
 
 // BusinessListOptions specifies the optional parameters to the LIST endpoint
@@ -70,12 +64,12 @@ func (service *BusinessesService) List(opts *BusinessListOptions) ([]Business, *
 	if err != nil {
 		return nil, nil, err
 	}
-	listResponse := new(businessList)
-	resp, err := service.client.Do(req, listResponse, true)
+	businesses := new([]Business)
+	resp, err := service.client.Do(req, businesses)
 	if err != nil {
 		return nil, resp, err
 	}
-	return listResponse.Results, resp, nil
+	return *businesses, resp, nil
 }
 
 // Get an existing business.
@@ -88,7 +82,7 @@ func (service *BusinessesService) Get(id string) (*Business, *Response, error) {
 		return nil, nil, err
 	}
 	business := new(Business)
-	resp, err := service.client.Do(req, business, false)
+	resp, err := service.client.Do(req, business)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -104,7 +98,7 @@ func (service *BusinessesService) Create(business *Business) (*Business, *Respon
 		return nil, nil, err
 	}
 	b := new(Business)
-	resp, err := service.client.Do(req, b, false)
+	resp, err := service.client.Do(req, b)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -121,7 +115,7 @@ func (service *BusinessesService) Replace(id string, business *Business) (*Busin
 		return nil, nil, err
 	}
 	b := new(Business)
-	resp, err := service.client.Do(req, b, false)
+	resp, err := service.client.Do(req, b)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -138,7 +132,7 @@ func (service *BusinessesService) Update(id string, business *Business) (*Busine
 		return nil, nil, err
 	}
 	b := new(Business)
-	resp, err := service.client.Do(req, b, false)
+	resp, err := service.client.Do(req, b)
 	if err != nil {
 		return nil, resp, err
 	}

@@ -49,7 +49,7 @@ func (service *AccountsService) List(businessID string) ([]Account, *Response, e
 		return nil, nil, err
 	}
 	accounts := new([]Account)
-	resp, err := service.client.Do(req, accounts, false)
+	resp, err := service.client.Do(req, accounts)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -66,7 +66,7 @@ func (service *AccountsService) Get(businessID string, accountID uint64) (*Accou
 		return nil, nil, err
 	}
 	account := new(Account)
-	resp, err := service.client.Do(req, account, false)
+	resp, err := service.client.Do(req, account)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -83,7 +83,7 @@ func (service *AccountsService) Create(businessID string, account *Account) (*Ac
 		return nil, nil, err
 	}
 	a := new(Account)
-	resp, err := service.client.Do(req, a, false)
+	resp, err := service.client.Do(req, a)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -100,7 +100,7 @@ func (service *AccountsService) Replace(businessID string, accountID uint64, acc
 		return nil, nil, err
 	}
 	a := new(Account)
-	resp, err := service.client.Do(req, a, false)
+	resp, err := service.client.Do(req, a)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -117,7 +117,7 @@ func (service *AccountsService) Update(businessID string, accountID uint64, acco
 		return nil, nil, err
 	}
 	a := new(Account)
-	resp, err := service.client.Do(req, a, false)
+	resp, err := service.client.Do(req, a)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -133,5 +133,5 @@ func (service *AccountsService) Delete(businessID string, accountID uint64) (*Re
 	if err != nil {
 		return nil, err
 	}
-	return service.client.Do(req, nil, false)
+	return service.client.Do(req, nil)
 }

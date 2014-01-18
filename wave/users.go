@@ -69,7 +69,7 @@ func (service *UsersService) Get() (*User, *Response, error) {
 		return nil, nil, err
 	}
 	user := new(User)
-	resp, err := service.client.Do(req, user, false)
+	resp, err := service.client.Do(req, user)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -85,7 +85,7 @@ func (service *UsersService) Replace(user *User) (*User, *Response, error) {
 		return nil, nil, err
 	}
 	u := new(User)
-	resp, err := service.client.Do(req, u, false)
+	resp, err := service.client.Do(req, u)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -101,7 +101,7 @@ func (service *UsersService) Update(user *User) (*User, *Response, error) {
 		return nil, nil, err
 	}
 	u := new(User)
-	resp, err := service.client.Do(req, u, false)
+	resp, err := service.client.Do(req, u)
 	if err != nil {
 		return nil, resp, err
 	}

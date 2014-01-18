@@ -9,9 +9,9 @@ package wave
 import (
 	"encoding/json"
 	"fmt"
+	. "github.com/smartystreets/goconvey/convey"
 	"net/http"
 	"testing"
-	. "github.com/smartystreets/goconvey/convey"
 )
 
 const (

@@ -47,7 +47,7 @@ func (service *CountriesService) List() ([]Country, *Response, error) {
 		return nil, nil, err
 	}
 	countries := new([]Country)
-	resp, err := service.client.Do(req, countries, false)
+	resp, err := service.client.Do(req, countries)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -64,26 +64,9 @@ func (service *CountriesService) Get(code string) (*Country, *Response, error) {
 		return nil, nil, err
 	}
 	country := new(Country)
-	resp, err := service.client.Do(req, country, false)
+	resp, err := service.client.Do(req, country)
 	if err != nil {
 		return nil, resp, err
 	}
 	return country, resp, nil
-}
-
-// Provinces gets a specific province for a given country.
-//
-// Wave API docs: http://docs.waveapps.com/endpoints/geography.html#get--countries-(country_code)-provinces-
-func (service *CountriesService) Provinces(code string) ([]Province, *Response, error) {
-	u := fmt.Sprintf("countries/%v/provinces", code)
-	req, err := service.client.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-	provinces := new([]Province)
-	resp, err := service.client.Do(req, provinces, false)
-	if err != nil {
-		return nil, resp, err
-	}
-	return *provinces, resp, nil
 }

@@ -74,11 +74,7 @@ const (
     "date_created": "2013-12-05T10:31:01+00:00",
     "date_modified": "2013-12-05T13:37:59+00:00"
 }`
-	expectedCustomersJSON = `{
-"next": null,
-"previous": null,
-"total_count": 1,
-"results": [` + expectedCustomerJSON + "]}"
+	expectedCustomersJSON = "[" + expectedCustomerJSON + "]"
 )
 
 func TestCustomersService(t *testing.T) {

@@ -50,10 +50,7 @@ const (
 		"date_created":"2009-11-10T23:00:00+00:00",
 		"date_modified":"2009-11-10T23:00:00+00:00"
 	}`
-	expectedProductsJSON = `{
-"next": null,
-"previous": null,
-"results": [` + expectedProductJSON + "]}"
+	expectedProductsJSON = "[" + expectedProductJSON + "]"
 )
 
 func TestProductsService(t *testing.T) {
