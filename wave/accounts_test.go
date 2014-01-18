@@ -9,10 +9,10 @@ package wave
 import (
 	"encoding/json"
 	"fmt"
-	. "github.com/smartystreets/goconvey/convey"
 	"net/http"
 	"testing"
 	"time"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 const (
@@ -24,6 +24,7 @@ const (
 		"account_class":"bank",
 		"account_type":"asset",
 		"standard_account_number":2,
+		"account_template_id":42,
 		"account_number":3,
 		"is_payment":false,
 		"can_delete":true,
@@ -56,6 +57,7 @@ func TestAccountsService(t *testing.T) {
 			AccountClass:          String("bank"),
 			AccountType:           String("asset"),
 			StandardAccountNumber: Int(2),
+			AccountTemplateID:     Int(42),
 			AccountNumber:         Int(3),
 			IsPayment:             Bool(false),
 			CanDelete:             Bool(true),

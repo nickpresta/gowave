@@ -24,6 +24,7 @@ type Account struct {
 	AccountClass          *string   `json:"account_class,omitempty"`
 	AccountType           *string   `json:"account_type,omitempty"`
 	StandardAccountNumber *int      `json:"standard_account_number,omitempty"`
+	AccountTemplateID     *int      `json:"account_template_id,omitempty"`
 	AccountNumber         *int      `json:"account_number,omitempty"`
 	IsPayment             *bool     `json:"is_payment,omitempty"`
 	CanDelete             *bool     `json:"can_delete,omitempty"`
