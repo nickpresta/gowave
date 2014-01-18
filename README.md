@@ -67,7 +67,7 @@ options struct to nil in the function argument. If you do not wish to pass a
 specific option, you may omit it entirely from the struct. For example:
 
 ```go
-client.Products.List(bID, &ProductListOptions{EmbedAccounts: true})
+client.Products.List(bID, &wave.ProductListOptions{EmbedAccounts: true})
 ```
 
 ### Pagination
@@ -75,7 +75,7 @@ client.Products.List(bID, &ProductListOptions{EmbedAccounts: true})
 Pagination options are passed in the optional parameters:
 
 ```go
-options = &ProductListOptions{PageOptions: wave.PageOptions{Page: 5, PageSize: 10}}
+options = &wave.ProductListOptions{PageOptions: wave.PageOptions{Page: 5, PageSize: 10}}
 client.Products.List(bID, options)
 ```
 
@@ -108,7 +108,7 @@ b := &Business{
 	BusinessTypeInfo: &BusinessTypeInfo{
 		BusinessType:       String("consultants_professionals"),
 		BusinessSubtype:    String("consultants_professionals__communications"),
-		OrganizationalType: String("partnership_1"),
+		OrganizationType:   String("partnership"),
 	},
 	Address: &Address{
 		Country: &Country{
@@ -116,7 +116,7 @@ b := &Business{
 		},
 	},
 }
-business, _, err = integrationClient.Businesses.Create(b)
+business, _, err = client.Businesses.Create(b)
 // Do something with business
 ```
 
