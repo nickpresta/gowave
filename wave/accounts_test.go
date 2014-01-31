@@ -80,7 +80,7 @@ func TestAccountsService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/businesses/1/accounts", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/businesses/1/accounts/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "GET")
 			fmt.Fprint(w, expectedAccountsJSON)
 		})
@@ -100,7 +100,7 @@ func TestAccountsService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/businesses/1/accounts/1", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/businesses/1/accounts/1/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "GET")
 			fmt.Fprint(w, expectedAccountJSON)
 		})
@@ -119,7 +119,7 @@ func TestAccountsService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/businesses/1/accounts", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/businesses/1/accounts/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "POST")
 			fmt.Fprint(w, expectedAccountJSON)
 		})
@@ -139,7 +139,7 @@ func TestAccountsService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/businesses/1/accounts/1", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/businesses/1/accounts/1/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "PUT")
 			fmt.Fprint(w, expectedAccountJSON)
 		})
@@ -159,7 +159,7 @@ func TestAccountsService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/businesses/1/accounts/1", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/businesses/1/accounts/1/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "PATCH")
 			fmt.Fprint(w, expectedAccountJSON)
 		})
@@ -179,7 +179,7 @@ func TestAccountsService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/businesses/1/accounts/1", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/businesses/1/accounts/1/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "DELETE")
 			w.WriteHeader(http.StatusNoContent)
 		})

@@ -62,7 +62,7 @@ func TestCountriesService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/countries", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/countries/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "GET")
 			fmt.Fprint(w, expectedCountriesJSON)
 		})
@@ -77,7 +77,7 @@ func TestCountriesService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/countries/CA", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/countries/CA/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "GET")
 			fmt.Fprint(w, expectedCountryJSON)
 		})

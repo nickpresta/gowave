@@ -92,7 +92,7 @@ func TestBusinessesService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/businesses", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/businesses/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "GET")
 			fmt.Fprint(w, expectedBusinessesJSON)
 		})
@@ -107,7 +107,7 @@ func TestBusinessesService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/businesses/1", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/businesses/1/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "GET")
 			fmt.Fprint(w, expectedBusinessJSON)
 		})
@@ -126,7 +126,7 @@ func TestBusinessesService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/businesses", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/businesses/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "POST")
 			fmt.Fprint(w, expectedBusinessJSON)
 		})
@@ -141,7 +141,7 @@ func TestBusinessesService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/businesses/1", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/businesses/1/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "PUT")
 			fmt.Fprint(w, expectedBusinessJSON)
 		})
@@ -161,7 +161,7 @@ func TestBusinessesService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/businesses/1", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/businesses/1/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "PATCH")
 			fmt.Fprint(w, expectedBusinessJSON)
 		})

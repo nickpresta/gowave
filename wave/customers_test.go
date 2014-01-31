@@ -85,7 +85,7 @@ func TestCustomersService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/businesses/1/customers", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/businesses/1/customers/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "GET")
 			fmt.Fprint(w, expectedCustomersJSON)
 		})
@@ -105,7 +105,7 @@ func TestCustomersService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/businesses/1/customers/1", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/businesses/1/customers/1/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "GET")
 			fmt.Fprint(w, expectedCustomerJSON)
 		})
@@ -124,7 +124,7 @@ func TestCustomersService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/businesses/1/customers", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/businesses/1/customers/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "POST")
 			fmt.Fprint(w, expectedCustomerJSON)
 		})
@@ -144,7 +144,7 @@ func TestCustomersService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/businesses/1/customers/1", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/businesses/1/customers/1/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "PUT")
 			fmt.Fprint(w, expectedCustomerJSON)
 		})
@@ -164,7 +164,7 @@ func TestCustomersService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/businesses/1/customers/1", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/businesses/1/customers/1/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "PATCH")
 			fmt.Fprint(w, expectedCustomerJSON)
 		})
@@ -184,7 +184,7 @@ func TestCustomersService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/businesses/1/customers/1", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/businesses/1/customers/1/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "DELETE")
 			w.WriteHeader(http.StatusNoContent)
 		})

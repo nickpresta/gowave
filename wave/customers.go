@@ -86,7 +86,7 @@ type CustomerListOptions struct {
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/customers.html#get--businesses-{business_id}-customers-
 func (service *CustomersService) List(businessID string, opts *CustomerListOptions) ([]Customer, *Response, error) {
-	url := fmt.Sprintf("businesses/%v/customers", businessID)
+	url := fmt.Sprintf("businesses/%v/customers/", businessID)
 	url, err := addOptions(url, opts)
 	if err != nil {
 		return nil, nil, err
@@ -107,7 +107,7 @@ func (service *CustomersService) List(businessID string, opts *CustomerListOptio
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/customers.html#get--businesses-{business_id}-customers-{customer_id}-
 func (service *CustomersService) Get(businessID string, customerID uint64) (*Customer, *Response, error) {
-	url := fmt.Sprintf("businesses/%v/customers/%v", businessID, customerID)
+	url := fmt.Sprintf("businesses/%v/customers/%v/", businessID, customerID)
 	req, err := service.client.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
@@ -124,7 +124,7 @@ func (service *CustomersService) Get(businessID string, customerID uint64) (*Cus
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/customers.html#post--businesses-{business_id}-customers-
 func (service *CustomersService) Create(businessID string, customer *Customer) (*Customer, *Response, error) {
-	url := fmt.Sprintf("businesses/%v/customers", businessID)
+	url := fmt.Sprintf("businesses/%v/customers/", businessID)
 	req, err := service.client.NewRequest("POST", url, customer)
 	if err != nil {
 		return nil, nil, err
@@ -141,7 +141,7 @@ func (service *CustomersService) Create(businessID string, customer *Customer) (
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/customers.html#put--businesses-{business_id}-customers-{customer_id}-
 func (service *CustomersService) Replace(businessID string, customerID uint64, customer *Customer) (*Customer, *Response, error) {
-	url := fmt.Sprintf("businesses/%v/customers/%v", businessID, customerID)
+	url := fmt.Sprintf("businesses/%v/customers/%v/", businessID, customerID)
 	req, err := service.client.NewRequest("PUT", url, customer)
 	if err != nil {
 		return nil, nil, err
@@ -158,7 +158,7 @@ func (service *CustomersService) Replace(businessID string, customerID uint64, c
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/customers.html#patch--businesses-{business_id}-customers-{customer_id}-
 func (service *CustomersService) Update(businessID string, customerID uint64, customer *Customer) (*Customer, *Response, error) {
-	url := fmt.Sprintf("businesses/%v/customers/%v", businessID, customerID)
+	url := fmt.Sprintf("businesses/%v/customers/%v/", businessID, customerID)
 	req, err := service.client.NewRequest("PATCH", url, customer)
 	if err != nil {
 		return nil, nil, err
@@ -175,7 +175,7 @@ func (service *CustomersService) Update(businessID string, customerID uint64, cu
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/accounts.html#delete--businesses-{business_id}-accounts-{account_id}-
 func (service *CustomersService) Delete(businessID string, customerID uint64) (*Response, error) {
-	url := fmt.Sprintf("businesses/%v/customers/%v", businessID, customerID)
+	url := fmt.Sprintf("businesses/%v/customers/%v/", businessID, customerID)
 	req, err := service.client.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return nil, err

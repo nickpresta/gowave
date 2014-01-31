@@ -64,7 +64,7 @@ func (u User) String() string {
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/users.html#get--user-
 func (service *UsersService) Get() (*User, *Response, error) {
-	req, err := service.client.NewRequest("GET", "user", nil)
+	req, err := service.client.NewRequest("GET", "user/", nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -80,7 +80,7 @@ func (service *UsersService) Get() (*User, *Response, error) {
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/users.html#put--user-
 func (service *UsersService) Replace(user *User) (*User, *Response, error) {
-	req, err := service.client.NewRequest("PUT", "user", user)
+	req, err := service.client.NewRequest("PUT", "user/", user)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -96,7 +96,7 @@ func (service *UsersService) Replace(user *User) (*User, *Response, error) {
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/users.html#patch--user-
 func (service *UsersService) Update(user *User) (*User, *Response, error) {
-	req, err := service.client.NewRequest("PATCH", "user", user)
+	req, err := service.client.NewRequest("PATCH", "user/", user)
 	if err != nil {
 		return nil, nil, err
 	}

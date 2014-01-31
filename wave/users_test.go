@@ -9,9 +9,9 @@ package wave
 import (
 	"encoding/json"
 	"fmt"
-	. "github.com/smartystreets/goconvey/convey"
 	"net/http"
 	"testing"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 const (
@@ -54,7 +54,7 @@ func TestUsersService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/user", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/user/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "GET")
 			fmt.Fprint(w, expectedUserJSON)
 		})
@@ -68,7 +68,7 @@ func TestUsersService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/user", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/user/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "PUT")
 			fmt.Fprint(w, expectedUserJSON)
 		})
@@ -83,7 +83,7 @@ func TestUsersService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/user", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/user/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "PATCH")
 			fmt.Fprint(w, expectedUserJSON)
 		})

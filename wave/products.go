@@ -54,7 +54,7 @@ type ProductGetOptions struct {
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/products.html#get--businesses-{business_id}-products-
 func (service *ProductsService) List(businessID string, opts *ProductListOptions) ([]Product, *Response, error) {
-	url := fmt.Sprintf("businesses/%v/products", businessID)
+	url := fmt.Sprintf("businesses/%v/products/", businessID)
 	url, err := addOptions(url, opts)
 	if err != nil {
 		return nil, nil, err
@@ -75,7 +75,7 @@ func (service *ProductsService) List(businessID string, opts *ProductListOptions
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/products.html#get--businesses-{business_id}-products-{product_id}-
 func (service *ProductsService) Get(businessID string, productID uint64, opts *ProductGetOptions) (*Product, *Response, error) {
-	url := fmt.Sprintf("businesses/%v/products/%v", businessID, productID)
+	url := fmt.Sprintf("businesses/%v/products/%v/", businessID, productID)
 	url, err := addOptions(url, opts)
 	if err != nil {
 		return nil, nil, err
@@ -96,7 +96,7 @@ func (service *ProductsService) Get(businessID string, productID uint64, opts *P
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/products.html#post--businesses-{business_id}-products-
 func (service *ProductsService) Create(businessID string, product *Product) (*Product, *Response, error) {
-	url := fmt.Sprintf("businesses/%v/products", businessID)
+	url := fmt.Sprintf("businesses/%v/products/", businessID)
 	req, err := service.client.NewRequest("POST", url, product)
 	if err != nil {
 		return nil, nil, err
@@ -113,7 +113,7 @@ func (service *ProductsService) Create(businessID string, product *Product) (*Pr
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/products.html#put--businesses-{business_id}-products-{product_id}-
 func (service *ProductsService) Replace(businessID string, productID uint64, product *Product) (*Product, *Response, error) {
-	url := fmt.Sprintf("businesses/%v/products/%v", businessID, productID)
+	url := fmt.Sprintf("businesses/%v/products/%v/", businessID, productID)
 	req, err := service.client.NewRequest("PUT", url, product)
 	if err != nil {
 		return nil, nil, err
@@ -130,7 +130,7 @@ func (service *ProductsService) Replace(businessID string, productID uint64, pro
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/products.html#patch--businesses-{business_id}-products-{product_id}-
 func (service *ProductsService) Update(businessID string, productID uint64, product *Product) (*Product, *Response, error) {
-	url := fmt.Sprintf("businesses/%v/products/%v", businessID, productID)
+	url := fmt.Sprintf("businesses/%v/products/%v/", businessID, productID)
 	req, err := service.client.NewRequest("PATCH", url, product)
 	if err != nil {
 		return nil, nil, err
@@ -147,7 +147,7 @@ func (service *ProductsService) Update(businessID string, productID uint64, prod
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/accounts.html#delete--businesses-{business_id}-accounts-{account_id}-
 func (service *ProductsService) Delete(businessID string, productID uint64) (*Response, error) {
-	url := fmt.Sprintf("businesses/%v/products/%v", businessID, productID)
+	url := fmt.Sprintf("businesses/%v/products/%v/", businessID, productID)
 	req, err := service.client.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return nil, err

@@ -258,7 +258,7 @@ func TestNewRequest(t *testing.T) {
 	Convey("Making a NewRequest should set up the correct data", t, func() {
 		c := NewClient(nil)
 
-		inURL, outURL := "foo", defaultBaseURL+"foo"
+		inURL, outURL := "foo/", defaultBaseURL+"foo/"
 		inBody, outBody := &data{1}, `{"I":1}`+"\n"
 		req, err := c.NewRequest("GET", inURL, inBody)
 

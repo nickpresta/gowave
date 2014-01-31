@@ -56,7 +56,7 @@ type BusinessListOptions struct {
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/businesses.html#get--businesses-
 func (service *BusinessesService) List(opts *BusinessListOptions) ([]Business, *Response, error) {
-	url, err := addOptions("businesses", opts)
+	url, err := addOptions("businesses/", opts)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -76,7 +76,7 @@ func (service *BusinessesService) List(opts *BusinessListOptions) ([]Business, *
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/businesses.html#get--businesses-(identity_business_id)-
 func (service *BusinessesService) Get(id string) (*Business, *Response, error) {
-	u := fmt.Sprintf("businesses/%s", id)
+	u := fmt.Sprintf("businesses/%v/", id)
 	req, err := service.client.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, nil, err
@@ -93,7 +93,7 @@ func (service *BusinessesService) Get(id string) (*Business, *Response, error) {
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/businesses.html#post--businesses-
 func (service *BusinessesService) Create(business *Business) (*Business, *Response, error) {
-	req, err := service.client.NewRequest("POST", "businesses", business)
+	req, err := service.client.NewRequest("POST", "businesses/", business)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -109,7 +109,7 @@ func (service *BusinessesService) Create(business *Business) (*Business, *Respon
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/businesses.html#put--businesses-(identity_business_id)-
 func (service *BusinessesService) Replace(id string, business *Business) (*Business, *Response, error) {
-	url := fmt.Sprintf("businesses/%v", id)
+	url := fmt.Sprintf("businesses/%v/", id)
 	req, err := service.client.NewRequest("PUT", url, business)
 	if err != nil {
 		return nil, nil, err
@@ -126,7 +126,7 @@ func (service *BusinessesService) Replace(id string, business *Business) (*Busin
 //
 // Wave API docs: http://docs.waveapps.com/endpoints/businesses.html#patch--businesses-(identity_business_id)-
 func (service *BusinessesService) Update(id string, business *Business) (*Business, *Response, error) {
-	url := fmt.Sprintf("businesses/%v", id)
+	url := fmt.Sprintf("businesses/%v/", id)
 	req, err := service.client.NewRequest("PATCH", url, business)
 	if err != nil {
 		return nil, nil, err

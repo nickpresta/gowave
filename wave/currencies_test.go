@@ -9,9 +9,9 @@ package wave
 import (
 	"encoding/json"
 	"fmt"
-	. "github.com/smartystreets/goconvey/convey"
 	"net/http"
 	"testing"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 const (
@@ -44,7 +44,7 @@ func TestCurrenciesService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/currencies", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/currencies/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "GET")
 			fmt.Fprint(w, expectedCurrenciesJSON)
 		})
@@ -59,7 +59,7 @@ func TestCurrenciesService(t *testing.T) {
 		setUp()
 		defer tearDown()
 
-		mux.HandleFunc("/currencies/1", func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc("/currencies/1/", func(w http.ResponseWriter, r *http.Request) {
 			So(r.Method, ShouldEqual, "GET")
 			fmt.Fprint(w, expectedCurrencyJSON)
 		})
