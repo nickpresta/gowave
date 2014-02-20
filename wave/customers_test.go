@@ -19,7 +19,7 @@ const (
     "id": 1,
     "url": "https://api.waveapps.com/businesses/c2731e5c-5001-4fe3-87ae-477f9a48dfcc/customers/1/",
     "account_number": "12345",
-    "customer_name": "Mike Ehrmantraut",
+    "name": "Mike Ehrmantraut",
     "first_name": "Mike",
     "last_name": "Ehrmantraut",
     "email": "mike@hitmenforhire.com",
@@ -203,9 +203,9 @@ func TestCustomersService(t *testing.T) {
 			c := new(Customer)
 			So(c.FullName(), ShouldBeBlank)
 		})
-		Convey("Only CustomerName should return 'CustomerName'", func() {
+		Convey("Only Name should return 'Name'", func() {
 			c := new(Customer)
-			c.CustomerName = String("Foo Bar")
+			c.Name = String("Foo Bar")
 			So(c.FullName(), ShouldEqual, "Foo Bar")
 		})
 		Convey("No FirstName should return 'LastName'", func() {
